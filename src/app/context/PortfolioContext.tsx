@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { initialData } from '../data';
-import { PortfolioData, PersonalInfo, Project, Experience, Education, Certification, SkillCategory, Tool, Achievement } from '../types';
+import { PortfolioData, PersonalInfo, Project, Experience, Education, Certification, SkillCategory, Tool, Achievement, Message } from '../types';
 
 interface PortfolioContextType extends PortfolioData {
     updatePersonalInfo: (data: PersonalInfo) => void;
@@ -25,6 +25,9 @@ interface PortfolioContextType extends PortfolioData {
     addAchievement: (ach: Achievement) => void;
     updateAchievement: (id: string, ach: Achievement) => void;
     deleteAchievement: (id: string) => void;
+    addMessage: (msg: Message) => void;
+    markMessageAsRead: (id: string) => void;
+    deleteMessage: (id: string) => void;
     resetToDefault: () => void;
 }
 
@@ -41,7 +44,8 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                 ...parsed,
                 personalInfo: { ...initialData.personalInfo, ...parsed.personalInfo },
                 tools: parsed.tools || initialData.tools || [],
-                achievements: parsed.achievements || initialData.achievements || []
+                achievements: parsed.achievements || initialData.achievements || [],
+                messages: parsed.messages || []
             };
         }
         return initialData;
@@ -102,6 +106,13 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }));
     const deleteAchievement = (id: string) => setData(prev => ({ ...prev, achievements: prev.achievements.filter(a => a.id !== id) }));
 
+    const addMessage = (msg: Message) => setData(prev => ({ ...prev, messages: [...prev.messages, msg] }));
+    const markMessageAsRead = (id: string) => setData(prev => ({
+        ...prev,
+        messages: prev.messages.map(m => m.id === id ? { ...m, read: true } : m)
+    }));
+    const deleteMessage = (id: string) => setData(prev => ({ ...prev, messages: prev.messages.filter(m => m.id !== id) }));
+
     const resetToDefault = () => {
         localStorage.removeItem('portfolio_data');
         setData(initialData);
@@ -128,6 +139,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             addSkillCategory, updateSkillCategory, deleteSkillCategory,
             addTool, updateTool, deleteTool,
             addAchievement, updateAchievement, deleteAchievement,
+            addMessage, markMessageAsRead, deleteMessage,
             resetToDefault
         }}>
             {children}

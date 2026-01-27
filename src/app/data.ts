@@ -167,5 +167,6 @@ export const initialData: any = {
     experiences,
     projects,
     certifications,
-    achievements
+    achievements,
+    messages: []
 };

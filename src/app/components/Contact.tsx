@@ -4,17 +4,34 @@ import { useState } from "react";
 import { usePortfolio } from "../context/PortfolioContext";
 
 export function Contact() {
-  const { personalInfo } = usePortfolio();
+  const { personalInfo, addMessage } = usePortfolio();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
   });
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log("Form submitted:", formData);
+
+    // Create new message
+    const newMessage = {
+      id: Math.random().toString(36).substr(2, 9),
+      name: formData.name,
+      email: formData.email,
+      message: formData.message,
+      timestamp: new Date().toISOString(),
+      read: false
+    };
+
+    // Save message
+    addMessage(newMessage);
+
+    // Clear form and show success
+    setFormData({ name: "", email: "", message: "" });
+    setSubmitted(true);
+    setTimeout(() => setSubmitted(false), 3000);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -190,6 +207,16 @@ export function Contact() {
                   <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </span>
               </motion.button>
+
+              {submitted && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-center p-4 rounded-2xl bg-green-500/10 border border-green-500/20"
+                >
+                  <p className="text-green-400 font-semibold">✓ Message sent successfully!</p>
+                </motion.div>
+              )}
             </form>
           </motion.div>
         </div>

@@ -27,7 +27,8 @@ import {
     Smartphone,
     Cpu,
     GitBranch,
-    Trophy
+    Trophy,
+    MessageSquare
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -181,6 +182,7 @@ export function AdminPanel() {
                         { id: 'certificates', label: 'Certifications', icon: Award },
                         { id: 'achievements', label: 'Achievements', icon: Trophy },
                         { id: 'technologies', label: 'Tools & Badges', icon: Wrench },
+                        { id: 'messages', label: 'Contact Messages', icon: MessageSquare },
                     ].map((tab) => {
                         const Icon = tab.icon;
                         const isActive = activeTab === tab.id;
@@ -248,7 +250,8 @@ export function AdminPanel() {
                             transition={{ duration: 0.3 }}
                         >
                             {activeTab === 'profile' && <ProfileEditor />}
-                            {activeTab !== 'profile' && <DataListEditor type={activeTab as any} />}
+                            {activeTab === 'messages' && <MessagesViewer />}
+                            {activeTab !== 'profile' && activeTab !== 'messages' && <DataListEditor type={activeTab as any} />}
                         </motion.div>
                     </AnimatePresence>
                 </div>
@@ -811,6 +814,147 @@ function DataListEditor({ type }: { type: 'projects' | 'experience' | 'education
                     </div>
                 ))}
             </div>
+        </div>
+    );
+}
+
+function MessagesViewer() {
+    const { messages, markMessageAsRead, deleteMessage } = usePortfolio();
+    const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
+
+    const unreadCount = messages.filter(m => !m.read).length;
+
+    const handleSelectMessage = (id: string) => {
+        setSelectedMessage(id);
+        markMessageAsRead(id);
+    };
+
+    const handleDelete = (id: string) => {
+        if (window.confirm("Delete this message?")) {
+            deleteMessage(id);
+            if (selectedMessage === id) {
+                setSelectedMessage(null);
+            }
+        }
+    };
+
+    const selectedMsg = messages.find(m => m.id === selectedMessage);
+    const sortedMessages = [...messages].sort((a, b) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    );
+
+    return (
+        <div className="space-y-8">
+            <div className="flex justify-between items-center">
+                <div>
+                    <h2 className="text-3xl font-bold text-white mb-2">Contact Messages</h2>
+                    <p className="text-[#9CA3AF]">
+                        {unreadCount > 0 ? `${unreadCount} unread message${unreadCount > 1 ? 's' : ''}` : 'All messages read'}
+                    </p>
+                </div>
+                {messages.length > 0 && (
+                    <div className="text-sm text-[#9CA3AF]">
+                        Total: {messages.length} message{messages.length > 1 ? 's' : ''}
+                    </div>
+                )}
+            </div>
+
+            {messages.length === 0 ? (
+                <div className="text-center py-16 px-6 rounded-3xl bg-[#0B0F1A] border border-white/5">
+                    <MessageSquare className="w-16 h-16 mx-auto mb-4 text-[#9CA3AF]/30" />
+                    <h3 className="text-xl font-bold text-white mb-2">No Messages Yet</h3>
+                    <p className="text-[#9CA3AF]">Messages from your contact form will appear here</p>
+                </div>
+            ) : (
+                <div className="grid md:grid-cols-3 gap-6">
+                    {/* Messages List */}
+                    <div className="md:col-span-1 space-y-3 max-h-[600px] overflow-y-auto">
+                        {sortedMessages.map((msg) => (
+                            <motion.div
+                                key={msg.id}
+                                whileHover={{ scale: 1.02 }}
+                                onClick={() => handleSelectMessage(msg.id)}
+                                className={`p-4 rounded-2xl cursor-pointer transition-all ${selectedMessage === msg.id
+                                        ? 'bg-gradient-to-br from-purple-500/20 to-cyan-500/20 border-2 border-purple-500/40'
+                                        : msg.read
+                                            ? 'bg-[#0B0F1A] border border-white/5 hover:border-white/10'
+                                            : 'bg-gradient-to-br from-purple-500/10 to-cyan-500/10 border-2 border-purple-500/30'
+                                    }`}
+                            >
+                                <div className="flex items-start justify-between mb-2">
+                                    <h4 className="font-bold text-white truncate flex-1">{msg.name}</h4>
+                                    {!msg.read && (
+                                        <div className="w-2 h-2 rounded-full bg-purple-400 ml-2 mt-1 animate-pulse" />
+                                    )}
+                                </div>
+                                <p className="text-xs text-[#9CA3AF] mb-2">{msg.email}</p>
+                                <p className="text-sm text-[#9CA3AF] line-clamp-2">{msg.message}</p>
+                                <p className="text-xs text-[#9CA3AF] mt-2">
+                                    {new Date(msg.timestamp).toLocaleString()}
+                                </p>
+                            </motion.div>
+                        ))}
+                    </div>
+
+                    {/* Message Detail */}
+                    <div className="md:col-span-2">
+                        {selectedMsg ? (
+                            <div className="p-8 rounded-3xl bg-[#0B0F1A] border border-white/10 space-y-6">
+                                <div className="flex justify-between items-start">
+                                    <div className="flex-1">
+                                        <h3 className="text-2xl font-bold text-white mb-2">{selectedMsg.name}</h3>
+                                        <a
+                                            href={`mailto:${selectedMsg.email}`}
+                                            className="text-purple-400 hover:text-purple-300 transition-colors"
+                                        >
+                                            {selectedMsg.email}
+                                        </a>
+                                        <p className="text-sm text-[#9CA3AF] mt-2">
+                                            {new Date(selectedMsg.timestamp).toLocaleString('en-US', {
+                                                weekday: 'long',
+                                                year: 'numeric',
+                                                month: 'long',
+                                                day: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            })}
+                                        </p>
+                                    </div>
+                                    <button
+                                        onClick={() => handleDelete(selectedMsg.id)}
+                                        className="p-3 rounded-xl text-red-400 hover:bg-red-400/10 transition-all"
+                                    >
+                                        <Trash2 className="w-5 h-5" />
+                                    </button>
+                                </div>
+
+                                <div className="pt-6 border-t border-white/5">
+                                    <h4 className="text-sm font-bold text-[#9CA3AF] uppercase tracking-wider mb-4">Message</h4>
+                                    <p className="text-white leading-relaxed whitespace-pre-wrap">
+                                        {selectedMsg.message}
+                                    </p>
+                                </div>
+
+                                <div className="pt-6 border-t border-white/5 flex gap-4">
+                                    <a
+                                        href={`mailto:${selectedMsg.email}?subject=Re: Your message&body=Hi ${selectedMsg.name},%0D%0A%0D%0A`}
+                                        className="flex-1 px-6 py-4 rounded-2xl bg-gradient-to-r from-purple-500 to-cyan-500 text-white font-bold text-center hover:shadow-lg hover:shadow-purple-500/20 transition-all"
+                                    >
+                                        Reply via Email
+                                    </a>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex items-center justify-center h-full p-8 rounded-3xl bg-[#0B0F1A] border border-white/5">
+                                <div className="text-center">
+                                    <MessageSquare className="w-12 h-12 mx-auto mb-4 text-[#9CA3AF]/30" />
+                                    <p className="text-[#9CA3AF]">Select a message to view details</p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

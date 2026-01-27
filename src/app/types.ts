@@ -89,4 +89,14 @@ export interface PortfolioData {
     projects: Project[];
     certifications: Certification[];
     achievements: Achievement[];
+    messages: Message[];
+}
+
+export interface Message {
+    id: string;
+    name: string;
+    email: string;
+    message: string;
+    timestamp: string;
+    read: boolean;
 }
