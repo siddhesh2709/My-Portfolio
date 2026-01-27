@@ -24,7 +24,9 @@ export function PortfolioHome() {
             <main className={`transition-all duration-500 ease-in-out ${isSidebarOpen ? "xl:pr-[240px]" : "xl:pr-0"}`}>
                 <Hero />
                 <section id="about" className="relative py-32 px-6 overflow-hidden bg-gradient-to-b from-transparent via-[#0E1220]/30 to-transparent">
-                    <div className="absolute top-1/2 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px]" />
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                        {/* Background Elements */}
+                    </div>
                     <div className="max-w-4xl mx-auto relative z-10">
                         <div className="text-center mb-12">
                             <h2 className="text-4xl md:text-6xl font-bold mb-6">

@@ -16,8 +16,7 @@ export function Projects() {
 
   return (
     <section id="projects" className="relative py-32 px-6 overflow-hidden">
-      {/* Background Gradient */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px]" />
+      {/* Background Elements */}
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Section Header */}

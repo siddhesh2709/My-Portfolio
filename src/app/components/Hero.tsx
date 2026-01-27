@@ -10,10 +10,8 @@ export function Hero() {
       className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
     >
       {/* Animated Background Mesh */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/30 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-[120px] animate-pulse delay-1000" />
-        <div className="absolute top-1/2 right-1/3 w-96 h-96 bg-blue-500/20 rounded-full blur-[120px] animate-pulse delay-500" />
+      <div className="absolute inset-0">
+        {/* Background Elements */}
       </div>
 
       {/* Noise Texture Overlay */}

@@ -6,7 +6,7 @@ export function Certifications() {
     const { certifications } = usePortfolio();
     return (
         <section id="certifications" className="relative py-32 px-6 overflow-hidden">
-            <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px]" />
+            {/* Background Elements */}
 
             <div className="max-w-7xl mx-auto relative z-10">
                 <motion.div

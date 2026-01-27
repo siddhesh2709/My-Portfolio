@@ -36,9 +36,8 @@ const colorClasses = {
 export function Experience() {
   const { experiences } = usePortfolio();
   return (
-    <section id="experience" className="relative py-32 px-6 overflow-hidden bg-gradient-to-b from-transparent via-[#0E1220]/50 to-transparent">
+    <section id="experience" className="relative py-32 px-6 overflow-hidden">
       {/* Background Elements */}
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px]" />
 
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Section Header */}
