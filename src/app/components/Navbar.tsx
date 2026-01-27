@@ -37,15 +37,15 @@ function SocialIcon({ link }: { link: any }) {
   const [error, setError] = useState(false);
 
   if (link.type === 'icon') {
-    return <link.icon className="w-6 h-6" />;
+    return <link.icon className="w-5 h-5" />;
   }
 
   if (error) {
-    return <Globe className="w-6 h-6" />;
+    return <Globe className="w-5 h-5" />;
   }
 
   return (
-    <div className="relative w-6 h-6">
+    <div className="relative w-5 h-5">
       <div
         className="absolute inset-0 bg-current opacity-60 group-hover:opacity-100 transition-all duration-300"
         style={{
@@ -112,7 +112,7 @@ export function Navbar() {
               rel={link.href.startsWith('http') ? "noopener noreferrer" : undefined}
               whileHover={{ scale: 1.1, rotate: 5 }}
               whileTap={{ scale: 0.9 }}
-              className="group w-12 h-12 rounded-full bg-gradient-to-br from-purple-500/10 to-cyan-500/10 border border-purple-500/20 flex items-center justify-center text-[#9CA3AF] hover:text-[#E5E7EB] hover:border-purple-500/40 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 shadow-xl overflow-hidden"
+              className="group w-10 h-10 rounded-full bg-gradient-to-br from-purple-500/10 to-cyan-500/10 border border-purple-500/20 flex items-center justify-center text-[#9CA3AF] hover:text-[#E5E7EB] hover:border-purple-500/40 hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300 shadow-xl overflow-hidden"
             >
               <SocialIcon link={link} />
             </motion.a>
