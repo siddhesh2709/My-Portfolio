@@ -3,7 +3,7 @@
 A modern, premium developer portfolio built with React, TypeScript, and Tailwind CSS. Features a password-protected admin panel for dynamic content management.
 
 ## 🚀 Live Demo
-[View Live Portfolio](https://your-domain.vercel.app)
+[View Live Portfolio](https://siddheshavhad.vercel.app/)
 
 ## ✨ Features
 
