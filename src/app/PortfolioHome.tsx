@@ -15,7 +15,7 @@ import { useState } from "react";
 
 export function PortfolioHome() {
     const { personalInfo } = usePortfolio();
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     return (
         <div className="min-h-screen bg-[#0B0F1A] text-[#E5E7EB] overflow-x-hidden">
