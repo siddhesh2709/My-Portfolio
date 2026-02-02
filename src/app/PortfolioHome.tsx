@@ -18,7 +18,7 @@ export function PortfolioHome() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     return (
-        <div className="min-h-screen bg-[#0B0A0A] text-[#E5E7EB] overflow-x-hidden">
+        <div className="min-h-screen bg-[#0B0F1A] text-[#E5E7EB] overflow-x-hidden">
             <Navbar />
             <RightSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
             <main className={`transition-all duration-500 ease-in-out ${isSidebarOpen ? "xl:pr-[240px]" : "xl:pr-0"}`}>

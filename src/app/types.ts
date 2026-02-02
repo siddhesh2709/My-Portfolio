@@ -68,6 +68,7 @@ export interface Certification {
     title: string;
     period: string;
     description: string;
+    image?: string;
     order: number;
 }
 

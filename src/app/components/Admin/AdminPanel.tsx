@@ -665,15 +665,22 @@ function DataListEditor({ type }: { type: 'projects' | 'experience' | 'education
                                                     reader.onloadend = () => {
                                                         const updatedItem = { ...item, image: reader.result as string };
                                                         if (type === 'projects') portfolio.updateProject(item.id, updatedItem as any);
+                                                        if (type === 'certificates') portfolio.updateCertification(item.id, updatedItem as any);
                                                     };
                                                     reader.readAsDataURL(file);
                                                 }
                                             };
 
+                                            const handleRemoveImage = () => {
+                                                const updatedItem = { ...item, image: '' };
+                                                if (type === 'projects') portfolio.updateProject(item.id, updatedItem as any);
+                                                if (type === 'certificates') portfolio.updateCertification(item.id, updatedItem as any);
+                                            };
+
                                             return (
                                                 <div key={key} className="space-y-4">
                                                     <label className="text-xs font-bold text-[#9CA3AF] uppercase tracking-widest pl-1">
-                                                        Project Image
+                                                        {type === 'projects' ? 'Project Image' : 'Certificate Image'}
                                                     </label>
 
                                                     {/* Image Preview */}
@@ -681,10 +688,7 @@ function DataListEditor({ type }: { type: 'projects' | 'experience' | 'education
                                                         <div className="relative w-full h-48 rounded-xl overflow-hidden border border-white/10 group">
                                                             <img src={item[key]} alt="Preview" className="w-full h-full object-cover" />
                                                             <button
-                                                                onClick={() => {
-                                                                    const updatedItem = { ...item, image: '' };
-                                                                    if (type === 'projects') portfolio.updateProject(item.id, updatedItem as any);
-                                                                }}
+                                                                onClick={handleRemoveImage}
                                                                 className="absolute top-2 right-2 p-2 rounded-lg bg-red-500/80 text-white opacity-0 group-hover:opacity-100 transition-opacity"
                                                             >
                                                                 <X className="w-4 h-4" />

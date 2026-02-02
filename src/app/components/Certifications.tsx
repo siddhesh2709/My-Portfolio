@@ -31,37 +31,63 @@ export function Certifications() {
                     {certifications.map((cert, index) => (
                         <motion.div
                             key={cert.id}
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            whileHover={{ y: -10 }}
-                            transition={{ duration: 0.5, delay: index * 0.1 }}
-                            className="group relative p-8 rounded-[2rem] bg-white/[0.02] border border-white/10 backdrop-blur-xl hover:bg-cyan-500/5 hover:border-cyan-500/30 transition-all duration-300 h-full flex flex-col"
+                            whileHover={{ y: -8 }}
+                            transition={{ duration: 0.3, delay: index * 0.1 }}
+                            className="group relative rounded-2xl bg-white/[0.02] border border-white/10 backdrop-blur-xl hover:border-cyan-500/40 transition-all duration-300 overflow-hidden flex flex-col"
                         >
-                            <div className="absolute top-6 right-6 w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center opacity-50 group-hover:opacity-100 transition-opacity">
-                                <Award className="w-6 h-6 text-cyan-400" />
+                            {/* Certificate Image */}
+                            <div className="relative h-48 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 overflow-hidden">
+                                {cert.image ? (
+                                    <img
+                                        src={cert.image}
+                                        alt={cert.title}
+                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center">
+                                        <Award className="w-16 h-16 text-cyan-400/30" />
+                                    </div>
+                                )}
+                                {/* Overlay gradient */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F1A] via-transparent to-transparent opacity-60" />
                             </div>
 
-                            <h4 className="text-xl font-bold text-[#E5E7EB] mb-3 pr-10">{cert.title}</h4>
-                            <div className="flex items-center gap-2 text-sm text-cyan-400 mb-6">
-                                <Calendar className="w-4 h-4" />
-                                {cert.period}
-                            </div>
-                            <p className="text-[#9CA3AF] text-sm leading-relaxed mb-8 flex-1">
-                                {cert.description}
-                            </p>
+                            {/* Content */}
+                            <div className="p-6 flex flex-col flex-1">
+                                {/* Title */}
+                                <h4 className="text-xl font-bold text-[#E5E7EB] mb-3 group-hover:text-cyan-400 transition-colors">
+                                    {cert.title}
+                                </h4>
 
-                            <div className="flex items-center justify-between mt-auto pt-6 border-t border-white/5">
-                                <div className="flex gap-2">
-                                    <span className="px-3 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-[10px] font-bold text-cyan-400 uppercase tracking-wider">Verified</span>
-                                    <span className="px-3 py-1 rounded-lg bg-blue-500/10 border border-blue-500/20 text-[10px] font-bold text-blue-400 uppercase tracking-wider">Professional</span>
+                                {/* Date */}
+                                <div className="flex items-center gap-2 text-sm text-cyan-400 mb-4">
+                                    <Calendar className="w-4 h-4" />
+                                    {cert.period}
                                 </div>
-                                <motion.button
-                                    whileHover={{ scale: 1.1 }}
-                                    className="text-[#9CA3AF] hover:text-cyan-400 transition-colors"
-                                >
-                                    <ExternalLink className="w-5 h-5" />
-                                </motion.button>
+
+                                {/* Description */}
+                                <p className="text-[#9CA3AF] text-sm leading-relaxed mb-6 flex-1">
+                                    {cert.description}
+                                </p>
+
+                                {/* Footer */}
+                                <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                                    <div className="flex gap-2">
+                                        <span className="px-3 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-[10px] font-bold text-cyan-400 uppercase tracking-wider">
+                                            Verified
+                                        </span>
+                                    </div>
+                                    <motion.button
+                                        whileHover={{ scale: 1.1 }}
+                                        whileTap={{ scale: 0.9 }}
+                                        className="p-2 rounded-lg text-[#9CA3AF] hover:text-cyan-400 hover:bg-cyan-500/10 transition-all"
+                                    >
+                                        <ExternalLink className="w-5 h-5" />
+                                    </motion.button>
+                                </div>
                             </div>
                         </motion.div>
                     ))}
