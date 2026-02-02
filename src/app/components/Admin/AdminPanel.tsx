@@ -652,18 +652,77 @@ function DataListEditor({ type }: { type: 'projects' | 'experience' | 'education
                                         }
 
                                         if (key === 'image') {
+                                            const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+                                                const file = e.target.files?.[0];
+                                                if (file) {
+                                                    // Check file size (max 2MB)
+                                                    if (file.size > 2 * 1024 * 1024) {
+                                                        alert('Image size should be less than 2MB');
+                                                        return;
+                                                    }
+
+                                                    const reader = new FileReader();
+                                                    reader.onloadend = () => {
+                                                        const updatedItem = { ...item, image: reader.result as string };
+                                                        if (type === 'projects') portfolio.updateProject(item.id, updatedItem as any);
+                                                    };
+                                                    reader.readAsDataURL(file);
+                                                }
+                                            };
+
                                             return (
                                                 <div key={key} className="space-y-4">
-                                                    <FormField
-                                                        label="Image URL"
-                                                        value={item[key]}
-                                                        onChange={handleItemChange}
-                                                    />
+                                                    <label className="text-xs font-bold text-[#9CA3AF] uppercase tracking-widest pl-1">
+                                                        Project Image
+                                                    </label>
+
+                                                    {/* Image Preview */}
                                                     {item[key] && (
-                                                        <div className="w-full h-32 rounded-xl overflow-hidden border border-white/10">
+                                                        <div className="relative w-full h-48 rounded-xl overflow-hidden border border-white/10 group">
                                                             <img src={item[key]} alt="Preview" className="w-full h-full object-cover" />
+                                                            <button
+                                                                onClick={() => {
+                                                                    const updatedItem = { ...item, image: '' };
+                                                                    if (type === 'projects') portfolio.updateProject(item.id, updatedItem as any);
+                                                                }}
+                                                                className="absolute top-2 right-2 p-2 rounded-lg bg-red-500/80 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                                            >
+                                                                <X className="w-4 h-4" />
+                                                            </button>
                                                         </div>
                                                     )}
+
+                                                    {/* Upload Button */}
+                                                    <div className="flex gap-3">
+                                                        <label className="flex-1 cursor-pointer">
+                                                            <div className="px-6 py-4 rounded-2xl bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border border-purple-500/20 hover:border-purple-500/40 transition-all text-center">
+                                                                <span className="text-white font-bold">
+                                                                    {item[key] ? 'Change Image' : 'Upload Image'}
+                                                                </span>
+                                                            </div>
+                                                            <input
+                                                                type="file"
+                                                                accept="image/*"
+                                                                onChange={handleImageUpload}
+                                                                className="hidden"
+                                                            />
+                                                        </label>
+                                                    </div>
+
+                                                    {/* Or use URL */}
+                                                    <details className="text-sm">
+                                                        <summary className="cursor-pointer text-[#9CA3AF] hover:text-white transition-colors">
+                                                            Or use image URL
+                                                        </summary>
+                                                        <div className="mt-3">
+                                                            <FormField
+                                                                label="Image URL"
+                                                                value={item[key]}
+                                                                onChange={handleItemChange}
+                                                                placeholder="https://..."
+                                                            />
+                                                        </div>
+                                                    </details>
                                                 </div>
                                             );
                                         }
@@ -875,10 +934,10 @@ function MessagesViewer() {
                                 whileHover={{ scale: 1.02 }}
                                 onClick={() => handleSelectMessage(msg.id)}
                                 className={`p-4 rounded-2xl cursor-pointer transition-all ${selectedMessage === msg.id
-                                        ? 'bg-gradient-to-br from-purple-500/20 to-cyan-500/20 border-2 border-purple-500/40'
-                                        : msg.read
-                                            ? 'bg-[#0B0F1A] border border-white/5 hover:border-white/10'
-                                            : 'bg-gradient-to-br from-purple-500/10 to-cyan-500/10 border-2 border-purple-500/30'
+                                    ? 'bg-gradient-to-br from-purple-500/20 to-cyan-500/20 border-2 border-purple-500/40'
+                                    : msg.read
+                                        ? 'bg-[#0B0F1A] border border-white/5 hover:border-white/10'
+                                        : 'bg-gradient-to-br from-purple-500/10 to-cyan-500/10 border-2 border-purple-500/30'
                                     }`}
                             >
                                 <div className="flex items-start justify-between mb-2">
