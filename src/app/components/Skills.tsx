@@ -101,27 +101,27 @@ export function Skills() {
               >
                 <motion.div
                   whileHover={{ y: -4 }}
-                  className={`h-full rounded-3xl bg-gradient-to-br ${colors.bg} backdrop-blur-xl border ${colors.border} p-6 hover:shadow-xl ${colors.glow} transition-all duration-300`}
+                  className={`h-full rounded-2xl bg-gradient-to-br ${colors.bg} backdrop-blur-xl border ${colors.border} p-5 hover:shadow-xl ${colors.glow} transition-all duration-300`}
                 >
                   {/* Category Header */}
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${colors.bg} border ${colors.border} flex items-center justify-center`}>
-                      <Icon className={`w-6 h-6 ${colors.text}`} />
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${colors.bg} border ${colors.border} flex items-center justify-center`}>
+                      <Icon className={`w-5 h-5 ${colors.text}`} />
                     </div>
-                    <h3 className="text-2xl font-bold text-[#E5E7EB]">
+                    <h3 className="text-xl font-bold text-[#E5E7EB]">
                       {category.title}
                     </h3>
                   </div>
 
                   {/* Skills with Progress Bars */}
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {category.skills.map((skill, skillIndex) => (
                       <div key={skill.id}>
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-[#E5E7EB]">{skill.name}</span>
-                          <span className="text-sm text-[#9CA3AF]">{skill.level}%</span>
+                        <div className="flex justify-between items-center mb-1.5">
+                          <span className="text-sm text-[#E5E7EB]">{skill.name}</span>
+                          <span className="text-xs text-[#9CA3AF]">{skill.level}%</span>
                         </div>
-                        <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                        <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
                           <motion.div
                             initial={{ width: 0 }}
                             whileInView={{ width: `${skill.level}%` }}
