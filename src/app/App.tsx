@@ -3,7 +3,13 @@ import { PortfolioProvider } from "./context/PortfolioContext";
 import { PortfolioHome } from "./PortfolioHome";
 import { AdminPanel } from "./components/Admin/AdminPanel";
 
+import { useEffect } from "react";
+
 export default function App() {
+  useEffect(() => {
+    document.title = "Siddhesh";
+  }, []);
+
   return (
     <PortfolioProvider>
       <Router>

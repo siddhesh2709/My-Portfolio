@@ -5,23 +5,24 @@ import { usePortfolio } from "../context/PortfolioContext";
 export function Education() {
     const { education } = usePortfolio();
     return (
-        <section id="education" className="relative py-32 px-6 overflow-hidden">
+        <section id="education" className="relative py-20 px-6 overflow-hidden">
             {/* Background Elements */}
+            <div className="absolute top-[40%] left-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px]" />
 
             <div className="max-w-7xl mx-auto relative z-10">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="mb-16 text-center"
+                    className="mb-20 text-center"
                 >
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-sm font-medium mb-6">
+                    <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-widest mb-6">
                         <GraduationCap className="w-4 h-4" />
                         Academic Journey
                     </div>
-                    <h2 className="text-4xl md:text-6xl font-bold">
-                        <span className="text-[#E5E7EB]">Educational </span>
-                        <span className="bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
+                    <h2 className="text-3xl md:text-5xl font-black tracking-tight">
+                        <span className="text-foreground">Educational </span>
+                        <span className="bg-gradient-to-r from-primary to-gradient-indigo bg-clip-text text-transparent">
                             Background
                         </span>
                     </h2>
@@ -35,33 +36,35 @@ export function Education() {
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6, delay: index * 0.1 }}
-                            className="relative pl-8 border-l-2 border-purple-500/20 group hover:border-purple-500/50 transition-colors"
+                            className="relative pl-8 border-l border-border group hover:border-primary/50 transition-colors"
                         >
                             {/* Timeline Bullet */}
-                            <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-[#0B0F1A] border-2 border-purple-500 group-hover:scale-125 transition-transform" />
+                            <div className="absolute -left-[5px] top-0 w-2.5 h-2.5 rounded-full bg-background border-2 border-primary group-hover:scale-150 transition-transform shadow-[0_0_10px_rgba(79,70,229,0.3)]" />
 
-                            <div className="p-8 rounded-3xl bg-gradient-to-br from-purple-500/5 to-transparent border border-white/5 backdrop-blur-sm group-hover:border-purple-500/20 group-hover:bg-purple-500/10 transition-all duration-300">
-                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                                    <div>
-                                        <h3 className="text-2xl md:text-3xl font-bold text-[#E5E7EB] mb-2">{edu.degree}</h3>
-                                        <p className="text-lg text-purple-400 font-medium flex items-center gap-2">
-                                            <BookOpen className="w-5 h-5" />
+                            <div className="p-6 md:p-8 rounded-[24px] bg-card border border-border backdrop-blur-xl group-hover:border-primary/20 transition-all duration-300 shadow-sm">
+                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                                    <div className="flex-1">
+                                        <h3 className="text-xl md:text-2xl font-black text-foreground mb-1 tracking-tight">{edu.degree}</h3>
+                                        <p className="text-base text-primary font-bold flex items-center gap-2">
+                                            <BookOpen className="w-4 h-4" />
                                             {edu.institution}
                                         </p>
                                     </div>
-                                    <div className="flex items-center gap-3">
-                                        <span className="px-4 py-2 rounded-2xl bg-white/5 border border-white/10 text-[#9CA3AF] flex items-center gap-2">
-                                            <Calendar className="w-4 h-4" />
+                                    <div className="flex flex-wrap items-center gap-3">
+                                        <span className="px-4 py-2 rounded-xl bg-secondary border border-border text-muted-foreground font-bold text-xs uppercase tracking-widest flex items-center gap-2">
+                                            <Calendar className="w-3.5 h-3.5" />
                                             {edu.period}
                                         </span>
-                                        <span className="px-4 py-2 rounded-2xl bg-purple-500/20 border border-purple-500/30 text-purple-300 font-bold">
+                                        <span className="px-4 py-2 rounded-xl bg-primary text-primary-foreground font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/10">
                                             {edu.scoreType}: {edu.score}{edu.scoreType === 'Percentage' ? '%' : ''}
                                         </span>
                                     </div>
                                 </div>
-                                <p className="text-[#9CA3AF] max-w-3xl leading-relaxed italic">
-                                    Specializing in cloud architecture and automation.
-                                </p>
+                                <div className="p-4 rounded-xl bg-secondary/50 border border-border">
+                                    <p className="text-sm text-muted-foreground leading-relaxed italic">
+                                        Focused on building a strong foundation in software engineering, problem solving, and modern technology.
+                                    </p>
+                                </div>
                             </div>
                         </motion.div>
                     ))}

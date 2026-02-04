@@ -3,41 +3,50 @@ import { Briefcase, Calendar } from "lucide-react";
 import { usePortfolio } from "../context/PortfolioContext";
 
 const colorClasses = {
-  purple: {
-    dot: "bg-purple-500",
-    line: "bg-purple-500/30",
-    glow: "shadow-purple-500/20",
-    border: "border-purple-500/20",
-    gradient: "from-purple-500/10 to-blue-500/10",
-  },
-  blue: {
-    dot: "bg-blue-500",
-    line: "bg-blue-500/30",
-    glow: "shadow-blue-500/20",
-    border: "border-blue-500/20",
-    gradient: "from-blue-500/10 to-cyan-500/10",
-  },
-  cyan: {
-    dot: "bg-cyan-500",
-    line: "bg-cyan-500/30",
-    glow: "shadow-cyan-500/20",
-    border: "border-cyan-500/20",
-    gradient: "from-cyan-500/10 to-purple-500/10",
+  indigo: {
+    dot: "bg-primary",
+    line: "bg-primary/30",
+    glow: "shadow-primary/20",
+    border: "border-primary/20",
+    gradient: "from-primary/10 to-gradient-indigo/5",
   },
   violet: {
-    dot: "bg-violet-500",
-    line: "bg-violet-500/30",
-    glow: "shadow-violet-500/20",
-    border: "border-violet-500/20",
-    gradient: "from-violet-500/10 to-indigo-500/10",
+    dot: "bg-gradient-purple",
+    line: "bg-gradient-purple/30",
+    glow: "shadow-gradient-purple/20",
+    border: "border-gradient-purple/20",
+    gradient: "from-gradient-purple/10 to-gradient-magenta/5",
   },
+  blue: {
+    dot: "bg-gradient-blue",
+    line: "bg-gradient-blue/30",
+    glow: "shadow-gradient-blue/20",
+    border: "border-gradient-blue/20",
+    gradient: "from-gradient-blue/10 to-gradient-cyan/5",
+  },
+  cyan: {
+    dot: "bg-gradient-cyan",
+    line: "bg-gradient-cyan/30",
+    glow: "shadow-gradient-cyan/20",
+    border: "border-gradient-cyan/20",
+    gradient: "from-gradient-cyan/10 to-gradient-blue/5",
+  },
+};
+
+const colorMap: Record<string, keyof typeof colorClasses> = {
+  orange: 'indigo',
+  purple: 'violet',
+  blue: 'blue',
+  cyan: 'cyan',
+  violet: 'violet',
 };
 
 export function Experience() {
   const { experiences } = usePortfolio();
   return (
-    <section id="experience" className="relative py-32 px-6 overflow-hidden">
+    <section id="experience" className="relative py-20 px-6 overflow-hidden">
       {/* Background Elements */}
+      <div className="absolute top-[20%] left-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px]" />
 
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Section Header */}
@@ -48,13 +57,13 @@ export function Experience() {
           transition={{ duration: 0.5 }}
           className="text-center mb-20"
         >
-          <h2 className="text-4xl md:text-6xl font-bold mb-4">
-            <span className="text-[#E5E7EB]">Work </span>
-            <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-              Experience
+          <h2 className="text-3xl md:text-5xl font-black mb-3 tracking-tight">
+            <span className="text-foreground">Professional </span>
+            <span className="bg-gradient-to-r from-primary to-gradient-indigo bg-clip-text text-transparent">
+              Journey
             </span>
           </h2>
-          <p className="text-lg text-[#9CA3AF] max-w-2xl mx-auto">
+          <p className="text-base text-muted-foreground max-w-2xl mx-auto">
             My professional journey building innovative solutions
           </p>
         </motion.div>
@@ -62,13 +71,14 @@ export function Experience() {
         {/* Timeline */}
         <div className="relative">
           {/* Timeline Line */}
-          <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-500/30 via-blue-500/30 to-violet-500/30" />
+          <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-border via-primary/30 to-border" />
 
           {/* Experience Items */}
           <div className="space-y-12">
             {experiences.map((exp, index) => {
               const isEven = index % 2 === 0;
-              const colors = colorClasses[exp.color as keyof typeof colorClasses];
+              const mappedColor = colorMap[exp.color] || 'indigo';
+              const colors = colorClasses[mappedColor];
 
               return (
                 <motion.div
@@ -84,7 +94,7 @@ export function Experience() {
                   <div className="absolute left-8 md:left-1/2 -translate-x-1/2 z-20">
                     <motion.div
                       whileHover={{ scale: 1.2 }}
-                      className={`w-6 h-6 rounded-full ${colors.dot} shadow-lg ${colors.glow} border-4 border-[#0B0F1A]`}
+                      className={`w-6 h-6 rounded-full ${colors.dot} shadow-lg ${colors.glow} border-4 border-background`}
                     >
                       <div className={`w-full h-full rounded-full ${colors.dot} animate-ping opacity-30`} />
                     </motion.div>
@@ -96,39 +106,39 @@ export function Experience() {
                     className={`w-full md:w-[calc(50%-3rem)] ${isEven ? "md:ml-0" : "md:mr-0"
                       } ml-20 md:ml-0`}
                   >
-                    <div className={`relative rounded-3xl bg-gradient-to-br ${colors.gradient} backdrop-blur-xl border ${colors.border} p-6 hover:border-opacity-40 transition-all duration-300 hover:shadow-xl ${colors.glow}`}>
+                    <div className={`relative rounded-[24px] bg-card backdrop-blur-xl border border-border p-6 md:p-8 hover:border-primary/40 transition-all duration-300 hover:shadow-2xl shadow-sm ${colors.glow}`}>
                       {/* Period Badge */}
-                      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 mb-4">
-                        <Calendar className="w-4 h-4 text-[#9CA3AF]" />
-                        <span className="text-sm text-[#9CA3AF]">{exp.period}</span>
+                      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary border border-border mb-4">
+                        <Calendar className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{exp.period}</span>
                       </div>
 
                       {/* Title and Company */}
-                      <div className="flex items-start gap-3 mb-4">
-                        <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${colors.gradient} border ${colors.border} flex items-center justify-center flex-shrink-0`}>
-                          <Briefcase className="w-6 h-6 text-[#E5E7EB]" />
+                      <div className="flex items-start gap-4 mb-6">
+                        <div className={`w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0`}>
+                          <Briefcase className="w-6 h-6 text-primary" />
                         </div>
                         <div>
-                          <h3 className="text-xl font-bold text-[#E5E7EB] mb-1">
+                          <h3 className="text-xl font-bold text-foreground mb-0.5 tracking-tight">
                             {exp.title}
                           </h3>
-                          <p className="text-[#9CA3AF]">{exp.company}</p>
+                          <p className="text-muted-foreground font-medium">{exp.company}</p>
                         </div>
                       </div>
 
                       {/* Description */}
-                      <p className="text-[#9CA3AF] mb-4 leading-relaxed">
+                      <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
                         {exp.description}
                       </p>
 
                       {/* Achievements */}
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         {exp.achievements.map((achievement, achIndex) => (
                           <div
                             key={achIndex}
-                            className="flex items-start gap-2 text-sm text-[#9CA3AF]"
+                            className="flex items-start gap-3 text-sm text-muted-foreground"
                           >
-                            <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-400 to-cyan-400 mt-2 flex-shrink-0" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
                             <span>{achievement}</span>
                           </div>
                         ))}

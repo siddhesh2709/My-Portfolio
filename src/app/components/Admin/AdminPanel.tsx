@@ -28,9 +28,15 @@ import {
     Cpu,
     GitBranch,
     Trophy,
-    MessageSquare
+    MessageSquare,
+    Camera,
+    Image as ImageIcon
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Cropper from 'react-easy-crop';
+import { useCallback } from 'react';
+import { uploadToR2 } from '../../utils/storage';
+import { toast } from 'sonner';
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
@@ -44,7 +50,20 @@ const iconOptions = {
     Smartphone: Smartphone,
     Cpu: Cpu,
     Zap: Zap,
-    GitBranch: GitBranch
+    GitBranch: GitBranch,
+    Code2: Code,
+};
+
+const base64ToBlob = (base64: string): Blob => {
+    const parts = base64.split(',');
+    const byteString = atob(parts[1]);
+    const mimeString = parts[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mimeString });
 };
 export function AdminPanel() {
     const portfolio = usePortfolio();
@@ -67,35 +86,35 @@ export function AdminPanel() {
 
     if (!isAuthenticated) {
         return (
-            <div className="min-h-screen bg-[#06080F] flex items-center justify-center p-6 font-sans">
+            <div className="min-h-screen bg-background-alt flex items-center justify-center p-6 font-sans">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     className="w-full max-w-md"
                 >
-                    <div className="p-10 rounded-[2.5rem] bg-[#0B0F1A] border border-white/10 shadow-2xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 blur-[80px]" />
+                    <div className="p-10 rounded-[2.5rem] bg-card border border-border shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[80px]" />
 
                         <div className="relative z-10">
                             <div className="flex items-center justify-center mb-8">
-                                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-purple-500/20">
+                                <div className="w-16 h-16 rounded-2xl bg-black flex items-center justify-center shadow-lg shadow-black/20">
                                     <Code className="w-8 h-8 text-white" />
                                 </div>
                             </div>
 
-                            <h1 className="text-3xl font-bold text-white text-center mb-2">Admin Portal</h1>
-                            <p className="text-[#9CA3AF] text-center mb-8 text-sm">Enter your password to continue</p>
+                            <h1 className="text-3xl font-bold text-foreground text-center mb-2">Admin Portal</h1>
+                            <p className="text-muted-foreground text-center mb-8 text-sm">Enter your password to continue</p>
 
                             <form onSubmit={handleLogin} className="space-y-6">
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold text-[#9CA3AF] uppercase tracking-widest pl-1">
+                                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest pl-1">
                                         Password
                                     </label>
                                     <input
                                         type="password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full px-6 py-4 rounded-2xl bg-[#06080F] border border-white/10 text-white focus:border-purple-500/50 focus:ring-4 focus:ring-purple-500/5 focus:outline-none transition-all"
+                                        className="w-full px-6 py-4 rounded-2xl bg-secondary border border-border text-foreground focus:border-primary/50 focus:ring-4 focus:ring-primary/5 focus:outline-none transition-all"
                                         placeholder="Enter password..."
                                         autoFocus
                                     />
@@ -103,7 +122,7 @@ export function AdminPanel() {
                                         <motion.p
                                             initial={{ opacity: 0, y: -4 }}
                                             animate={{ opacity: 1, y: 0 }}
-                                            className="text-red-400 text-sm pl-1 font-medium"
+                                            className="text-destructive text-sm pl-1 font-medium"
                                         >
                                             {error}
                                         </motion.p>
@@ -112,7 +131,7 @@ export function AdminPanel() {
 
                                 <button
                                     type="submit"
-                                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-500 to-cyan-500 text-white font-bold hover:shadow-lg hover:shadow-purple-500/20 transition-all"
+                                    className="w-full py-4 rounded-2xl bg-black text-white font-bold hover:shadow-lg hover:shadow-black/20 transition-all"
                                 >
                                     Access Admin Panel
                                 </button>
@@ -120,7 +139,7 @@ export function AdminPanel() {
 
                             <Link
                                 to="/"
-                                className="mt-6 flex items-center justify-center gap-2 text-[#9CA3AF] hover:text-white transition-colors text-sm"
+                                className="mt-6 flex items-center justify-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm"
                             >
                                 <ChevronLeft className="w-4 h-4" />
                                 Back to Portfolio
@@ -133,18 +152,18 @@ export function AdminPanel() {
     }
 
     return (
-        <div className="min-h-screen bg-[#06080F] text-[#E5E7EB] flex font-sans overflow-hidden">
+        <div className="min-h-screen bg-background-alt text-foreground flex font-sans overflow-hidden">
             {/* Sidebar */}
             <motion.aside
                 initial={false}
                 animate={{ width: isSidebarOpen ? 288 : 88 }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="bg-[#0B0F1A] border-r border-white/5 flex flex-col sticky top-0 h-screen z-50 group/sidebar"
+                className="bg-card border-r border-border flex flex-col sticky top-0 h-screen z-50 group/sidebar shadow-xl shadow-black/5"
             >
                 {/* Toggle Button */}
                 <button
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className="absolute -right-3 top-12 w-6 h-6 rounded-full bg-purple-500 text-white flex items-center justify-center shadow-lg shadow-purple-500/20 hover:scale-110 transition-transform z-[60]"
+                    className="absolute -right-3 top-12 w-6 h-6 rounded-full bg-black text-white flex items-center justify-center shadow-lg shadow-black/20 hover:scale-110 transition-transform z-[60]"
                 >
                     {isSidebarOpen ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                 </button>
@@ -214,25 +233,13 @@ export function AdminPanel() {
                     })}
                 </nav>
 
-                <div className="p-4 border-t border-white/5 space-y-3">
-                    <button
-                        onClick={() => {
-                            if (window.confirm("Reset all data to default values? This cannot be undone.")) {
-                                portfolio.resetToDefault();
-                            }
-                        }}
-                        className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl bg-red-500/5 text-red-500/80 border border-red-500/10 hover:bg-red-500/20 hover:text-red-500 hover:border-red-500/30 transition-all font-black text-[10px] uppercase tracking-widest ${!isSidebarOpen && 'justify-center'}`}
-                        title="Reset Data"
-                    >
-                        <RefreshCcw className="w-5 h-5 shrink-0" />
-                        {isSidebarOpen && <span className="whitespace-nowrap">Reset Data</span>}
-                    </button>
+                <div className="p-4 border-t border-white/5">
                     <Link
                         to="/"
-                        className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl bg-white/5 text-white/80 border border-white/10 hover:bg-white/10 hover:text-white hover:border-white/30 transition-all font-black text-[10px] uppercase tracking-widest ${!isSidebarOpen && 'justify-center'}`}
+                        className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl bg-gradient-to-r from-purple-500/10 to-cyan-500/10 text-white border border-purple-500/20 hover:from-purple-500/20 hover:to-cyan-500/20 transition-all font-bold text-xs uppercase tracking-widest ${!isSidebarOpen && 'justify-center shadow-lg shadow-purple-500/10'}`}
                         title="View Site"
                     >
-                        <LogOut className="w-5 h-5 shrink-0" />
+                        <LogOut className="w-5 h-5 shrink-0 text-purple-400" />
                         {isSidebarOpen && <span className="whitespace-nowrap">View Site</span>}
                     </Link>
                 </div>
@@ -260,10 +267,45 @@ export function AdminPanel() {
     );
 }
 
+const getCroppedImg = async (imageSrc: string, pixelCrop: any): Promise<string> => {
+    const image = new Image();
+    image.src = imageSrc;
+    await new Promise((resolve) => (image.onload = resolve));
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) return '';
+
+    canvas.width = pixelCrop.width;
+    canvas.height = pixelCrop.height;
+
+    ctx.drawImage(
+        image,
+        pixelCrop.x,
+        pixelCrop.y,
+        pixelCrop.width,
+        pixelCrop.height,
+        0,
+        0,
+        pixelCrop.width,
+        pixelCrop.height
+    );
+
+    return canvas.toDataURL('image/jpeg');
+};
+
 function ProfileEditor() {
     const { personalInfo, updatePersonalInfo } = usePortfolio();
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
     const [newLink, setNewLink] = useState({ platform: '', appUrl: '', accountUrl: '' });
+
+    // Cropping State
+    const [isCropping, setIsCropping] = useState(false);
+    const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+    const [crop, setCrop] = useState({ x: 0, y: 0 });
+    const [zoom, setZoom] = useState(1);
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -279,8 +321,72 @@ function ProfileEditor() {
         }
     };
 
+    const handleDeleteLink = (key: string) => {
+        if (window.confirm(`Remove ${key} link?`)) {
+            const newLinks = { ...personalInfo.links };
+            delete newLinks[key];
+            updatePersonalInfo({ ...personalInfo, links: newLinks });
+        }
+    };
+
+    const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Image size should be less than 5MB');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = () => {
+                setImageToCrop(reader.result as string);
+                setIsCropping(true);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleCropComplete = useCallback((_croppedArea: any, croppedAreaPixels: any) => {
+        setCroppedAreaPixels(croppedAreaPixels);
+    }, []);
+
+    const saveCroppedImage = async () => {
+        if (imageToCrop && croppedAreaPixels) {
+            try {
+                const croppedImage = await getCroppedImg(imageToCrop, croppedAreaPixels);
+
+                // Try R2 upload if configured
+                if (import.meta.env.VITE_R2_ACCESS_KEY_ID) {
+                    const uploadToast = toast.loading('Uploading to Cloudflare R2...');
+                    try {
+                        const blob = base64ToBlob(croppedImage);
+                        const fileName = `avatar-${Date.now()}.jpg`;
+                        const url = await uploadToR2(blob, fileName);
+                        updatePersonalInfo({ ...personalInfo, avatar: url });
+                        toast.success('Avatar uploaded to R2', { id: uploadToast });
+                    } catch (err) {
+                        console.error('R2 Upload failed, using base64 fallback', err);
+                        updatePersonalInfo({ ...personalInfo, avatar: croppedImage });
+                        toast.error('R2 upload failed, using local storage', { id: uploadToast });
+                    }
+                } else {
+                    updatePersonalInfo({ ...personalInfo, avatar: croppedImage });
+                }
+
+                setIsCropping(false);
+                setImageToCrop(null);
+            } catch (e) {
+                console.error(e);
+                toast.error('Error processing image');
+            }
+        }
+    };
+
+    const handleRemoveAvatar = () => {
+        updatePersonalInfo({ ...personalInfo, avatar: '' });
+    };
+
     const handleAddLink = () => {
-        setIsModalOpen(true);
+        setIsLinkModalOpen(true);
     };
 
     const confirmAddLink = () => {
@@ -294,51 +400,98 @@ function ProfileEditor() {
                 links: { ...personalInfo.links, [platform]: value }
             });
             setNewLink({ platform: '', appUrl: '', accountUrl: '' });
-            setIsModalOpen(false);
-        }
-    };
-
-    const handleDeleteLink = (key: string) => {
-        if (window.confirm(`Remove ${key} link?`)) {
-            const newLinks = { ...personalInfo.links };
-            delete newLinks[key];
-            updatePersonalInfo({ ...personalInfo, links: newLinks });
+            setIsLinkModalOpen(false);
         }
     };
 
     return (
         <div className="grid gap-8">
-            <section className="p-10 rounded-[2.5rem] bg-[#0B0F1A] border border-white/5 shadow-2xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 blur-[80px]" />
-                <h3 className="text-2xl font-bold mb-8 flex items-center gap-3 text-white">
-                    <User className="text-purple-400 w-6 h-6" />
+            {/* Profile Photo Section */}
+            <section className="p-10 rounded-[2.5rem] bg-card border border-border shadow-2xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[80px]" />
+                <h3 className="text-2xl font-bold mb-8 flex items-center gap-3 text-foreground">
+                    <Camera className="text-primary w-6 h-6" />
+                    Profile Photo
+                </h3>
+
+                <div className="flex flex-col md:flex-row items-center gap-10 relative z-10">
+                    <div className="relative group/avatar">
+                        <div className="w-40 h-40 md:w-48 md:h-48 rounded-full border-4 border-primary/20 p-2 overflow-hidden bg-secondary shadow-2xl">
+                            <div className="w-full h-full rounded-full overflow-hidden relative">
+                                {personalInfo.avatar ? (
+                                    <img src={personalInfo.avatar} alt="Profile" className="w-full h-full object-cover" />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center bg-secondary">
+                                        <User className="w-20 h-20 text-muted-foreground/30" />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        {personalInfo.avatar && (
+                            <button
+                                onClick={handleRemoveAvatar}
+                                className="absolute -top-2 -right-2 p-3 rounded-full bg-red-500 text-white shadow-lg opacity-0 group-hover/avatar:opacity-100 transition-opacity hover:bg-red-600"
+                            >
+                                <Trash2 className="w-4 h-4" />
+                            </button>
+                        )}
+                    </div>
+
+                    <div className="flex-1 space-y-6">
+                        <div className="space-y-4">
+                            <p className="text-[#9CA3AF] text-sm leading-relaxed">
+                                Upload a high-quality profile picture. This will be displayed in the circular section of your home page. Supports JPG, PNG (Max 2MB).
+                            </p>
+                            <label className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-primary text-primary-foreground font-black cursor-pointer hover:shadow-lg hover:shadow-primary/20 transition-all uppercase tracking-widest text-xs">
+                                <ImageIcon className="w-5 h-5" />
+                                Upload New Photo
+                                <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+                            </label>
+                        </div>
+
+                        <div className="pt-4 border-t border-border">
+                            <FormField
+                                label="Profile Image URL"
+                                name="avatar"
+                                value={personalInfo.avatar || ''}
+                                onChange={handleChange}
+                                placeholder="https://images.unsplash.com/..."
+                            />
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section className="p-10 rounded-[2.5rem] bg-card border border-border shadow-2xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[80px]" />
+                <h3 className="text-2xl font-bold mb-8 flex items-center gap-3 text-foreground">
+                    <User className="text-primary w-6 h-6" />
                     Core Identity
                 </h3>
                 <div className="grid grid-cols-2 gap-6 relative z-10">
                     <FormField label="Full Name" name="name" value={personalInfo.name} onChange={handleChange} />
                     <FormField label="Professional Title" name="title" value={personalInfo.title} onChange={handleChange} />
                     <div className="col-span-2 space-y-2">
-                        <label className="text-sm font-bold text-[#9CA3AF] uppercase tracking-widest pl-1">Professional Biography</label>
+                        <label className="text-sm font-bold text-muted-foreground uppercase tracking-widest pl-1">Professional Biography</label>
                         <textarea
                             name="profile"
                             value={personalInfo.profile}
                             onChange={handleChange}
-                            className="w-full min-h-[160px] px-6 py-4 rounded-2xl bg-[#06080F] border border-white/10 text-white focus:border-purple-500/50 focus:ring-4 focus:ring-purple-500/5 focus:outline-none transition-all resize-none leading-relaxed"
+                            className="w-full min-h-[160px] px-6 py-4 rounded-2xl bg-secondary border border-border text-foreground focus:border-primary/50 focus:ring-4 focus:ring-primary/5 focus:outline-none transition-all resize-none leading-relaxed"
                             placeholder="Tell your professional story..."
                         />
                     </div>
                 </div>
             </section>
 
-            <section className="p-10 rounded-[2.5rem] bg-[#0B0F1A] border border-white/5 shadow-2xl">
+            <section className="p-10 rounded-[2.5rem] bg-card border border-border shadow-2xl">
                 <div className="flex justify-between items-center mb-8">
-                    <h3 className="text-2xl font-bold flex items-center gap-3 text-white">
-                        <FolderOpen className="text-cyan-400 w-6 h-6" />
+                    <h3 className="text-2xl font-bold flex items-center gap-3 text-foreground">
+                        <FolderOpen className="text-primary w-6 h-6" />
                         Connect & Reach
                     </h3>
                     <button
                         onClick={handleAddLink}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-400/10 text-cyan-400 border border-cyan-400/20 hover:bg-cyan-400/20 transition-all font-bold text-xs uppercase tracking-widest"
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-all font-bold text-xs uppercase tracking-widest"
                     >
                         <Plus className="w-4 h-4" />
                         Add Link
@@ -367,9 +520,90 @@ function ProfileEditor() {
                 </div>
             </section>
 
+            {/* Image Cropping Modal */}
+            <AnimatePresence>
+                {isCropping && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-xl p-6"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="w-full max-w-2xl bg-[#0B0F1A] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl"
+                        >
+                            <div className="p-8 border-b border-white/5 flex justify-between items-center bg-card">
+                                <h3 className="text-xl font-bold text-white flex items-center gap-3">
+                                    <ImageIcon className="text-primary w-5 h-5" />
+                                    Crop Profile Photo
+                                </h3>
+                                <button
+                                    onClick={() => setIsCropping(false)}
+                                    className="p-2 hover:bg-white/5 rounded-xl transition-all"
+                                >
+                                    <X className="w-6 h-6 text-[#9CA3AF]" />
+                                </button>
+                            </div>
+
+                            <div className="relative h-96 bg-black">
+                                {imageToCrop && (
+                                    <Cropper
+                                        image={imageToCrop}
+                                        crop={crop}
+                                        zoom={zoom}
+                                        aspect={1}
+                                        cropShape="round"
+                                        showGrid={false}
+                                        onCropChange={setCrop}
+                                        onZoomChange={setZoom}
+                                        onCropComplete={handleCropComplete}
+                                    />
+                                )}
+                            </div>
+
+                            <div className="p-8 space-y-8 bg-card">
+                                <div className="space-y-4">
+                                    <div className="flex justify-between text-sm font-bold text-muted-foreground uppercase tracking-widest">
+                                        <span>Zoom Level</span>
+                                        <span>{Math.round(zoom * 100)}%</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min={1}
+                                        max={3}
+                                        step={0.1}
+                                        value={zoom}
+                                        onChange={(e) => setZoom(parseFloat(e.target.value))}
+                                        className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
+                                    />
+                                </div>
+
+                                <div className="flex gap-4">
+                                    <button
+                                        onClick={() => setIsCropping(false)}
+                                        className="flex-1 px-8 py-4 rounded-2xl bg-white/5 text-white font-bold hover:bg-white/10 transition-all"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={saveCroppedImage}
+                                        className="flex-1 px-8 py-4 rounded-2xl bg-primary text-primary-foreground font-black hover:shadow-lg hover:shadow-primary/20 transition-all uppercase tracking-widest"
+                                    >
+                                        Apply Crop & Save
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* Custom Modal for Adding Links */}
             <AnimatePresence>
-                {isModalOpen && (
+                {isLinkModalOpen && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -389,7 +623,7 @@ function ProfileEditor() {
                                     <Plus className="text-cyan-400 w-6 h-6" />
                                     New Connection
                                 </h3>
-                                <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white/5 rounded-xl transition-all">
+                                <button onClick={() => setIsLinkModalOpen(false)} className="p-2 hover:bg-white/5 rounded-xl transition-all">
                                     <X className="w-6 h-6 text-[#9CA3AF]" />
                                 </button>
                             </div>
@@ -416,7 +650,7 @@ function ProfileEditor() {
 
                                 <div className="pt-4 flex gap-4">
                                     <button
-                                        onClick={() => setIsModalOpen(false)}
+                                        onClick={() => setIsLinkModalOpen(false)}
                                         className="flex-1 px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition-all font-sans"
                                     >
                                         Cancel
@@ -440,14 +674,14 @@ function ProfileEditor() {
 function FormField({ label, name, value, onChange, placeholder, type = "text" }: any) {
     return (
         <div className="space-y-2">
-            <label className="text-xs font-bold text-[#9CA3AF] uppercase tracking-widest pl-1">{label}</label>
+            <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest pl-1">{label}</label>
             <input
                 type={type}
                 name={name}
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
-                className="w-full px-6 py-4 rounded-2xl bg-[#06080F] border border-white/10 text-white focus:border-purple-500/50 focus:ring-4 focus:ring-purple-500/5 focus:outline-none transition-all"
+                className="w-full px-6 py-4 rounded-2xl bg-secondary border border-border text-foreground focus:border-primary/50 focus:ring-4 focus:ring-primary/5 focus:outline-none transition-all"
             />
         </div>
     );
@@ -596,10 +830,10 @@ function DataListEditor({ type }: { type: 'projects' | 'experience' | 'education
                 {items.map((item: any) => (
                     <div key={item.id} className="group relative">
                         {editingId === item.id ? (
-                            <div className="p-8 rounded-3xl bg-[#0B0F1A] border-2 border-purple-500/50 shadow-2xl">
-                                <div className="flex justify-between items-center mb-8 pb-4 border-b border-white/5">
-                                    <h4 className="text-xl font-bold text-white uppercase tracking-tight">Edit Detail</h4>
-                                    <button onClick={() => setEditingId(null)} className="p-2 rounded-xl hover:bg-white/5 text-[#9CA3AF]">
+                            <div className="p-8 rounded-3xl bg-card border-2 border-primary/50 shadow-2xl">
+                                <div className="flex justify-between items-center mb-8 pb-4 border-b border-border">
+                                    <h4 className="text-xl font-bold text-foreground uppercase tracking-tight">Edit Detail</h4>
+                                    <button onClick={() => setEditingId(null)} className="p-2 rounded-xl hover:bg-secondary text-muted-foreground">
                                         <X className="w-6 h-6" />
                                     </button>
                                 </div>
@@ -655,19 +889,46 @@ function DataListEditor({ type }: { type: 'projects' | 'experience' | 'education
                                             const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
                                                 const file = e.target.files?.[0];
                                                 if (file) {
-                                                    // Check file size (max 2MB)
-                                                    if (file.size > 2 * 1024 * 1024) {
-                                                        alert('Image size should be less than 2MB');
+                                                    // Check file size (max 5MB for R2)
+                                                    if (file.size > 5 * 1024 * 1024) {
+                                                        alert('Image size should be less than 5MB');
                                                         return;
                                                     }
 
-                                                    const reader = new FileReader();
-                                                    reader.onloadend = () => {
-                                                        const updatedItem = { ...item, image: reader.result as string };
-                                                        if (type === 'projects') portfolio.updateProject(item.id, updatedItem as any);
-                                                        if (type === 'certificates') portfolio.updateCertification(item.id, updatedItem as any);
+                                                    const uploadToBucket = async (f: File) => {
+                                                        const uploadToast = toast.loading(`Uploading ${type} image...`);
+                                                        try {
+                                                            const fileName = `${type}-${Date.now()}-${f.name.replace(/\s+/g, '-')}`;
+                                                            const url = await uploadToR2(f, fileName);
+                                                            const updatedItem = { ...item, image: url };
+                                                            if (type === 'projects') portfolio.updateProject(item.id, updatedItem as any);
+                                                            if (type === 'certificates') portfolio.updateCertification(item.id, updatedItem as any);
+                                                            toast.success('Uploaded to R2', { id: uploadToast });
+                                                        } catch (err) {
+                                                            console.error('R2 Upload failed, using base64 fallback', err);
+                                                            toast.error('R2 fail, using local storage', { id: uploadToast });
+
+                                                            const reader = new FileReader();
+                                                            reader.onloadend = () => {
+                                                                const updatedItem = { ...item, image: reader.result as string };
+                                                                if (type === 'projects') portfolio.updateProject(item.id, updatedItem as any);
+                                                                if (type === 'certificates') portfolio.updateCertification(item.id, updatedItem as any);
+                                                            };
+                                                            reader.readAsDataURL(f);
+                                                        }
                                                     };
-                                                    reader.readAsDataURL(file);
+
+                                                    if (import.meta.env.VITE_R2_ACCESS_KEY_ID) {
+                                                        uploadToBucket(file);
+                                                    } else {
+                                                        const reader = new FileReader();
+                                                        reader.onloadend = () => {
+                                                            const updatedItem = { ...item, image: reader.result as string };
+                                                            if (type === 'projects') portfolio.updateProject(item.id, updatedItem as any);
+                                                            if (type === 'certificates') portfolio.updateCertification(item.id, updatedItem as any);
+                                                        };
+                                                        reader.readAsDataURL(file);
+                                                    }
                                                 }
                                             };
 

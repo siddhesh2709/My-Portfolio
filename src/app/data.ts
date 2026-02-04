@@ -13,6 +13,7 @@ export const personalInfo = {
         codechef: "https://www.codechef.com/users/siddhesh_2",
     },
     profile: "Full-Stack Web Developer with hands-on experience in building and deploying scalable web applications using the MERN stack and AWS cloud services. Currently preparing for AWS Certified Solutions Architect– Associate, with practical knowledge of EC2, S3, IAM, VPC, and cloud-based deployment. Strong understanding of REST APIs, authentication, system design, and cloud-ready application architecture.",
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop",
 };
 
 export const education = [
@@ -39,7 +40,7 @@ export const skillCategories = [
             { id: "s-3", name: "JavaScript (ES6+)", level: 90 },
             { id: "s-4", name: "WebRTC", level: 80 },
         ],
-        color: "purple",
+        color: "orange",
     },
     {
         id: "cat-2",
@@ -52,7 +53,7 @@ export const skillCategories = [
             { id: "s-7", name: "REST APIs", level: 90 },
             { id: "s-8", name: "Microservices", level: 80 },
         ],
-        color: "blue",
+        color: "orange",
     },
     {
         id: "cat-3",
@@ -63,7 +64,7 @@ export const skillCategories = [
             { id: "s-9", name: "MongoDB", level: 85 },
             { id: "s-10", name: "MySQL", level: 80 },
         ],
-        color: "cyan",
+        color: "orange",
     },
     {
         id: "cat-4",
@@ -75,7 +76,7 @@ export const skillCategories = [
             { id: "s-12", name: "Oracle/GCP", level: 75 },
             { id: "s-13", name: "JWT/OAuth 2.0", level: 85 },
         ],
-        color: "violet",
+        color: "orange",
     },
 ];
 
@@ -99,7 +100,7 @@ export const experiences = [
             "Collaborated in a Git/GitHub-based environment",
             "Improved code quality through debugging and reviews",
         ],
-        color: "purple",
+        color: "orange",
         order: 1
     },
 ];
@@ -111,7 +112,7 @@ export const projects = [
         subtitle: "Smart Dairy Farm Management System",
         description: "A full-stack web platform designed to help dairy farmers manage cow profiles, milk production, health records, breeding cycles, and sales using cloud and AI-assisted features.",
         tags: ["MERN Stack", "AWS S3", "AI"],
-        gradient: "from-purple-500 to-blue-500",
+        gradient: "from-[#792D21] to-[#A84632]",
         link: "#",
         github: "#",
         image: "https://images.unsplash.com/photo-1546445317-29f4545e9d53?q=80&w=1000&auto=format&fit=crop",
@@ -123,7 +124,7 @@ export const projects = [
         subtitle: "AI-Assisted Smart Medication System",
         description: "Built an AI-Assisted Smart Medication web application using Flask, TensorFlow (CNN + NLP), and MongoDB to analyze symptoms and recommend medicines with personalized dosage.",
         tags: ["Flask", "TensorFlow", "MongoDB", "AWS EC2", "NLP"],
-        gradient: "from-cyan-500 to-blue-500",
+        gradient: "from-[#A84632] to-[#C85A3F]",
         link: "#",
         github: "#",
         image: "https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?q=80&w=1000&auto=format&fit=crop",

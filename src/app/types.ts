@@ -6,6 +6,7 @@ export interface PersonalInfo {
     phone: string;
     links: Record<string, string>;
     profile: string;
+    avatar?: string;
 }
 
 export interface Education {

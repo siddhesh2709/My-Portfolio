@@ -3,13 +3,6 @@ import { ExternalLink, Github } from "lucide-react";
 import { useState } from "react";
 import { usePortfolio } from "../context/PortfolioContext";
 
-const projectGradients = [
-  "from-purple-500 to-blue-500",
-  "from-cyan-500 to-blue-500",
-  "from-magenta-500 to-violet-500",
-  "from-violet-500 to-indigo-500",
-];
-
 export function Projects() {
   const { projects } = usePortfolio();
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -17,6 +10,7 @@ export function Projects() {
   return (
     <section id="projects" className="relative py-32 px-6 overflow-hidden">
       {/* Background Elements */}
+      <div className="absolute top-[30%] right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px]" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Section Header */}
@@ -27,18 +21,19 @@ export function Projects() {
           transition={{ duration: 0.5 }}
           className="text-center mb-20"
         >
-          <h2 className="text-4xl md:text-6xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-6xl font-black mb-4 tracking-tight">
+            <span className="text-foreground">Featured </span>
+            <span className="bg-gradient-to-r from-primary to-gradient-indigo bg-clip-text text-transparent">
               Projects
             </span>
           </h2>
-          <p className="text-lg text-[#9CA3AF] max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             A selection of projects that showcase my expertise in building modern, scalable applications
           </p>
         </motion.div>
 
         {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project, index) => (
             <motion.div
               key={index}
@@ -50,20 +45,14 @@ export function Projects() {
               onHoverEnd={() => setHoveredIndex(null)}
               className="group relative"
             >
-              {/* Glassmorphic Card */}
+              {/* Card */}
               <motion.div
-                whileHover={{ y: -8 }}
+                whileHover={{ y: -10 }}
                 transition={{ duration: 0.3 }}
-                className="relative h-full rounded-3xl bg-gradient-to-br from-[#11162A]/80 to-[#0E1220]/80 backdrop-blur-xl border border-white/10 overflow-hidden hover:border-purple-500/30 transition-all duration-300"
+                className="relative h-full rounded-[28px] bg-card border border-border overflow-hidden hover:border-primary/40 transition-all duration-300 shadow-xl shadow-primary/5"
               >
-                {/* Gradient Glow Effect */}
-                <div
-                  className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-br ${project.gradient} blur-xl -z-10`}
-                  style={{ transform: "scale(1.1)" }}
-                />
-
                 {/* Project Image */}
-                <div className="relative h-48 overflow-hidden">
+                <div className="relative h-40 overflow-hidden">
                   <motion.div
                     animate={{
                       scale: hoveredIndex === index ? 1.1 : 1,
@@ -78,20 +67,20 @@ export function Projects() {
                     />
                   </motion.div>
 
-                  {/* Overlay on Hover */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F1A] via-[#0B0F1A]/50 to-transparent opacity-60 group-hover:opacity-90 transition-opacity" />
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
 
                   {/* Action Buttons */}
-                  <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
                     <motion.a
                       href={project.github}
                       target="_blank"
                       rel="noopener noreferrer"
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center hover:bg-white/20 transition-colors"
+                      className="w-10 h-10 rounded-xl bg-background/80 backdrop-blur-md border border-border flex items-center justify-center hover:bg-primary hover:text-white transition-colors shadow-lg"
                     >
-                      <Github className="w-5 h-5 text-white" />
+                      <Github className="w-5 h-5" />
                     </motion.a>
                     <motion.a
                       href={project.link}
@@ -99,42 +88,37 @@ export function Projects() {
                       rel="noopener noreferrer"
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center hover:bg-white/20 transition-colors"
+                      className="w-10 h-10 rounded-xl bg-background/80 backdrop-blur-md border border-border flex items-center justify-center hover:bg-gradient-indigo hover:text-white transition-colors shadow-lg"
                     >
-                      <ExternalLink className="w-5 h-5 text-white" />
+                      <ExternalLink className="w-5 h-5" />
                     </motion.a>
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="p-5">
-                  <h3 className="text-xl font-bold text-[#E5E7EB] mb-2 group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-cyan-400 group-hover:bg-clip-text group-hover:text-transparent transition-all">
+                <div className="p-4">
+                  <h3 className="text-lg font-bold text-foreground mb-2 tracking-tight group-hover:text-primary transition-colors">
                     {project.title}
                   </h3>
-                  <p className="text-sm text-[#9CA3AF] mb-4 leading-relaxed line-clamp-2">
+                  <p className="text-sm text-muted-foreground mb-4 leading-relaxed line-clamp-2">
                     {project.description}
                   </p>
 
                   {/* Tech Stack Tags */}
-                  <div className="flex flex-wrap gap-1.5">
-                    {project.tags.slice(0, 3).map((tag, tagIndex) => (
+                  <div className="flex flex-wrap gap-2">
+                    {project.tags.map((tag, tagIndex) => (
                       <span
                         key={tagIndex}
-                        className="px-2.5 py-1 rounded-full text-xs bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border border-purple-500/20 text-[#9CA3AF] hover:border-purple-500/40 hover:text-[#E5E7EB] transition-colors"
+                        className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-secondary border border-border text-muted-foreground group-hover:border-primary/30 group-hover:text-primary transition-colors"
                       >
                         {tag}
                       </span>
                     ))}
-                    {project.tags.length > 3 && (
-                      <span className="px-2.5 py-1 rounded-full text-xs bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border border-purple-500/20 text-[#9CA3AF]">
-                        +{project.tags.length - 3}
-                      </span>
-                    )}
                   </div>
                 </div>
 
-                {/* Bottom Gradient Line */}
-                <div className={`h-1 bg-gradient-to-r ${project.gradient} opacity-0 group-hover:opacity-100 transition-opacity`} />
+                {/* Bottom Line */}
+                <div className={`h-1.5 w-full bg-gradient-to-r from-primary to-gradient-indigo scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500`} />
               </motion.div>
             </motion.div>
           ))}

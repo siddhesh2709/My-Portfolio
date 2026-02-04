@@ -27,43 +27,46 @@ const iconMap = {
 };
 
 const colorClasses = {
-  purple: {
-    bg: "from-purple-500/10 to-blue-500/10",
-    border: "border-purple-500/20 hover:border-purple-500/40",
-    text: "text-purple-400",
-    bar: "from-purple-500 to-blue-500",
-    glow: "shadow-purple-500/20",
+  black: {
+    bg: "bg-primary/5 hover:bg-primary/10",
+    border: "border-border hover:border-primary/40",
+    text: "text-primary",
+    bar: "bg-primary",
+    glow: "shadow-primary/10",
   },
-  blue: {
-    bg: "from-blue-500/10 to-cyan-500/10",
-    border: "border-blue-500/20 hover:border-blue-500/40",
-    text: "text-blue-400",
-    bar: "from-blue-500 to-cyan-500",
-    glow: "shadow-blue-500/20",
+  dark: {
+    bg: "bg-foreground/5 hover:bg-foreground/10",
+    border: "border-border hover:border-foreground/40",
+    text: "text-foreground",
+    bar: "bg-foreground",
+    glow: "shadow-foreground/10",
   },
-  cyan: {
-    bg: "from-cyan-500/10 to-purple-500/10",
-    border: "border-cyan-500/20 hover:border-cyan-500/40",
-    text: "text-cyan-400",
-    bar: "from-cyan-500 to-purple-500",
-    glow: "shadow-cyan-500/20",
+  grey: {
+    bg: "bg-muted-foreground/5 hover:bg-muted-foreground/10",
+    border: "border-border hover:border-muted-foreground/40",
+    text: "text-muted-foreground",
+    bar: "bg-muted-foreground",
+    glow: "shadow-muted-foreground/10",
   },
-  violet: {
-    bg: "from-violet-500/10 to-indigo-500/10",
-    border: "border-violet-500/20 hover:border-violet-500/40",
-    text: "text-violet-400",
-    bar: "from-violet-500 to-indigo-500",
-    glow: "shadow-violet-500/20",
-  },
+};
+
+// Map old colors to monochromatic ones
+const colorMap: Record<string, keyof typeof colorClasses> = {
+  orange: 'black',
+  purple: 'dark',
+  blue: 'black',
+  cyan: 'grey',
+  violet: 'dark',
+  indigo: 'black',
 };
 
 export function Skills() {
   const { skillCategories, tools } = usePortfolio();
 
   return (
-    <section id="skills" className="relative py-32 px-6 overflow-hidden">
+    <section id="skills" className="relative py-20 px-6 overflow-hidden">
       {/* Background Gradient */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-500/10 rounded-full blur-[150px]" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[150px]" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Section Header */}
@@ -74,13 +77,13 @@ export function Skills() {
           transition={{ duration: 0.5 }}
           className="text-center mb-20"
         >
-          <h2 className="text-4xl md:text-6xl font-bold mb-4">
-            <span className="text-[#E5E7EB]">Skills & </span>
-            <span className="bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">
+          <h2 className="text-3xl md:text-5xl font-bold mb-3 tracking-tight">
+            <span className="text-foreground">Skills & </span>
+            <span className="bg-gradient-to-r from-primary to-gradient-indigo bg-clip-text text-transparent">
               Expertise
             </span>
           </h2>
-          <p className="text-lg text-[#9CA3AF] max-w-2xl mx-auto">
+          <p className="text-base text-muted-foreground max-w-2xl mx-auto">
             Technologies and tools I use to bring ideas to life
           </p>
         </motion.div>
@@ -88,7 +91,8 @@ export function Skills() {
         {/* Skills Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
           {skillCategories.map((category, index) => {
-            const colors = colorClasses[category.color as keyof typeof colorClasses] || colorClasses.purple;
+            const mappedColor = colorMap[category.color] || 'black';
+            const colors = colorClasses[mappedColor];
             const Icon = iconMap[category.iconName as keyof typeof iconMap] || Layout;
 
             return (
@@ -101,14 +105,14 @@ export function Skills() {
               >
                 <motion.div
                   whileHover={{ y: -4 }}
-                  className={`h-full rounded-2xl bg-gradient-to-br ${colors.bg} backdrop-blur-xl border ${colors.border} p-5 hover:shadow-xl ${colors.glow} transition-all duration-300`}
+                  className={`h-full rounded-[24px] ${colors.bg} backdrop-blur-xl border ${colors.border} p-6 hover:shadow-2xl transition-all duration-300 shadow-sm`}
                 >
                   {/* Category Header */}
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${colors.bg} border ${colors.border} flex items-center justify-center`}>
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className={`w-10 h-10 rounded-xl bg-background border border-border flex items-center justify-center shadow-sm`}>
                       <Icon className={`w-5 h-5 ${colors.text}`} />
                     </div>
-                    <h3 className="text-xl font-bold text-[#E5E7EB]">
+                    <h3 className="text-xl font-bold text-foreground tracking-tight">
                       {category.title}
                     </h3>
                   </div>
@@ -117,17 +121,17 @@ export function Skills() {
                   <div className="space-y-3">
                     {category.skills.map((skill, skillIndex) => (
                       <div key={skill.id}>
-                        <div className="flex justify-between items-center mb-1.5">
-                          <span className="text-sm text-[#E5E7EB]">{skill.name}</span>
-                          <span className="text-xs text-[#9CA3AF]">{skill.level}%</span>
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-xs font-medium text-foreground/80">{skill.name}</span>
+                          <span className="text-[10px] font-bold text-muted-foreground">{skill.level}%</span>
                         </div>
-                        <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                        <div className="h-1 bg-secondary rounded-full overflow-hidden">
                           <motion.div
                             initial={{ width: 0 }}
                             whileInView={{ width: `${skill.level}%` }}
                             viewport={{ once: true }}
                             transition={{ duration: 1, delay: index * 0.1 + skillIndex * 0.1 }}
-                            className={`h-full bg-gradient-to-r ${colors.bar} rounded-full`}
+                            className={`h-full ${colors.bar} rounded-full`}
                           />
                         </div>
                       </div>
@@ -148,8 +152,8 @@ export function Skills() {
             transition={{ duration: 0.5 }}
             className="text-center"
           >
-            <h3 className="text-2xl font-bold text-[#E5E7EB] mb-8">Tools & Technologies</h3>
-            <div className="flex flex-wrap justify-center gap-4">
+            <h3 className="text-lg font-black uppercase tracking-widest text-primary/80 mb-8">Tools & Technologies</h3>
+            <div className="flex flex-wrap justify-center gap-3">
               {tools.map((tool, index) => {
                 const Icon = iconMap[tool.iconName as keyof typeof iconMap] || Zap;
                 return (
@@ -162,10 +166,10 @@ export function Skills() {
                     whileHover={{ scale: 1.1, y: -4 }}
                     className="group"
                   >
-                    <div className="px-6 py-4 rounded-2xl bg-gradient-to-br from-purple-500/10 to-cyan-500/10 backdrop-blur-xl border border-purple-500/20 hover:border-purple-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20">
-                      <div className="flex items-center gap-3">
-                        <Icon className="w-5 h-5 text-purple-400 group-hover:text-cyan-400 transition-colors" />
-                        <span className="text-[#E5E7EB] font-medium">{tool.name}</span>
+                    <div className="px-5 py-3 rounded-xl bg-card border border-border backdrop-blur-xl hover:border-primary/30 hover:shadow-lg transition-all duration-300">
+                      <div className="flex items-center gap-2">
+                        <Icon className="w-4 h-4 text-primary group-hover:scale-110 transition-all" />
+                        <span className="text-sm text-foreground/80 font-medium group-hover:text-primary transition-colors">{tool.name}</span>
                       </div>
                     </div>
                   </motion.div>
