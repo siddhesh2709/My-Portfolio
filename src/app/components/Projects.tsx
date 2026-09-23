@@ -48,7 +48,7 @@ export function Projects() {
               </div>
 
               {/* Image Preview */}
-              <div className="relative aspect-[16/9] overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700">
+              <div className="relative aspect-[16/9] overflow-hidden transition-all duration-700">
                 <div className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-10 group-hover:opacity-30 transition-opacity`} />
                 <img
                   src={project.image}

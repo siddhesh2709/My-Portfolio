@@ -480,7 +480,8 @@ export const certifications = [
         id: "cert-13",
         title: "HTML & CSS",
         issuer: "Udemy",
-        period: "Feb 2025",
+        period: "Mar 7, 2025",
+        image: "/certificates/cert-udemy-html-css.jpg",
         description:
             "Mastered HTML5 and CSS3 fundamentals, web page structure, styling, and responsive design. Credential ID: UC-bfeaaf18-043e-4919-a9a6-7e2df426ae4e.",
         order: 13
@@ -489,7 +490,8 @@ export const certifications = [
         id: "cert-14",
         title: "Applied Machine Learning in Python",
         issuer: "University of Michigan (via Coursera)",
-        period: "Dec 2024",
+        period: "Dec 14, 2024",
+        image: "/certificates/cert-coursera-ml-michigan.jpg",
         description:
             "Supervised and unsupervised ML using scikit-learn, feature engineering, and model evaluation. Credential ID: E1XDHZUIVJNJ.",
         order: 14
@@ -498,7 +500,8 @@ export const certifications = [
         id: "cert-15",
         title: "AWS Skill Builder — Cloud Computing Learner Guide",
         issuer: "Amazon Web Services (AWS)",
-        period: "Nov 2024",
+        period: "Nov 21, 2024",
+        image: "/certificates/cert-aws-skillbuilder.jpg",
         description:
             "AWS Skill Builder training covering cloud computing, core AWS services, cloud security, and scalable cloud architecture best practices.",
         order: 15

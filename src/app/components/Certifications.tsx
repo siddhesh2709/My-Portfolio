@@ -85,10 +85,8 @@ export function Certifications() {
                                             <img
                                                 src={cert.image}
                                                 alt={cert.title}
-                                                className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
                                             />
-                                            {/* Dark overlay */}
-                                            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors duration-300" />
 
                                             {/* Badge medal overlay (top-right) */}
                                             {hasBadge && (
