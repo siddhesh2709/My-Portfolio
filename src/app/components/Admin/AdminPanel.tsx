@@ -199,7 +199,6 @@ export function AdminPanel() {
                         { id: 'projects', label: 'Project Gallery', icon: FolderOpen },
                         { id: 'education', label: 'Academic Path', icon: GraduationCap },
                         { id: 'certificates', label: 'Certifications', icon: Award },
-                        { id: 'achievements', label: 'Achievements', icon: Trophy },
                         { id: 'technologies', label: 'Tools & Badges', icon: Wrench },
                         { id: 'messages', label: 'Contact Messages', icon: MessageSquare },
                     ].map((tab) => {
@@ -210,11 +209,11 @@ export function AdminPanel() {
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`w-full flex items-center gap-4 px-4 py-2.5 rounded-xl transition-all duration-300 relative group ${isActive
-                                    ? "bg-gradient-to-r from-purple-500/10 to-cyan-500/10 text-white border border-purple-500/20 shadow-[0_0_20px_rgba(168,85,247,0.1)]"
+                                    ? "bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 text-white border border-indigo-500/20 shadow-[0_0_20px_rgba(99,102,241,0.1)]"
                                     : "text-[#9CA3AF] hover:text-[#E5E7EB] hover:bg-white/5"
                                     }`}
                             >
-                                <Icon className={`w-5 h-5 shrink-0 ${isActive ? "text-purple-400" : ""}`} />
+                                <Icon className={`w-5 h-5 shrink-0 ${isActive ? "text-indigo-400" : ""}`} />
                                 <AnimatePresence>
                                     {isSidebarOpen && (
                                         <motion.span
@@ -236,10 +235,10 @@ export function AdminPanel() {
                 <div className="p-4 border-t border-white/5">
                     <Link
                         to="/"
-                        className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl bg-gradient-to-r from-purple-500/10 to-cyan-500/10 text-white border border-purple-500/20 hover:from-purple-500/20 hover:to-cyan-500/20 transition-all font-bold text-xs uppercase tracking-widest ${!isSidebarOpen && 'justify-center shadow-lg shadow-purple-500/10'}`}
+                        className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 text-white border border-indigo-500/20 hover:from-indigo-500/20 hover:to-cyan-500/20 transition-all font-black text-[10px] uppercase tracking-[0.2em] ${!isSidebarOpen && 'justify-center shadow-lg shadow-indigo-500/10'}`}
                         title="View Site"
                     >
-                        <LogOut className="w-5 h-5 shrink-0 text-purple-400" />
+                        <LogOut className="w-5 h-5 shrink-0 text-indigo-400" />
                         {isSidebarOpen && <span className="whitespace-nowrap">View Site</span>}
                     </Link>
                 </div>
@@ -355,7 +354,7 @@ function ProfileEditor() {
                 const croppedImage = await getCroppedImg(imageToCrop, croppedAreaPixels);
 
                 // Try R2 upload if configured
-                if (import.meta.env.VITE_R2_ACCESS_KEY_ID) {
+                if (import.meta.env.VITE_R2_PUBLIC_URL) {
                     const uploadToast = toast.loading('Uploading to Cloudflare R2...');
                     try {
                         const blob = base64ToBlob(croppedImage);
@@ -470,6 +469,8 @@ function ProfileEditor() {
                 <div className="grid grid-cols-2 gap-6 relative z-10">
                     <FormField label="Full Name" name="name" value={personalInfo.name} onChange={handleChange} />
                     <FormField label="Professional Title" name="title" value={personalInfo.title} onChange={handleChange} />
+                    <FormField label="Tagline (Hero subtitle)" name="tagline" value={(personalInfo as any).tagline || ''} onChange={handleChange} />
+                    <FormField label="Phone" name="phone" value={personalInfo.phone} onChange={handleChange} />
                     <div className="col-span-2 space-y-2">
                         <label className="text-sm font-bold text-muted-foreground uppercase tracking-widest pl-1">Professional Biography</label>
                         <textarea
@@ -779,6 +780,7 @@ function DataListEditor({ type }: { type: 'projects' | 'experience' | 'education
                 title: "New Certificate",
                 period: "2024",
                 description: "Credential verification details...",
+                image: "",
                 order: nextOrder
             });
         }
@@ -839,7 +841,7 @@ function DataListEditor({ type }: { type: 'projects' | 'experience' | 'education
                                 </div>
                                 <div className="grid gap-6">
                                     {Object.keys(item).map((key) => {
-                                        if (Array.isArray(item[key]) || key === 'id' || key === 'order') return null;
+                                        if (key === 'id' || key === 'order') return null;
 
                                         const handleItemChange = (e: any) => {
                                             const updatedItem = { ...item, [key]: e.target.value };
@@ -851,6 +853,63 @@ function DataListEditor({ type }: { type: 'projects' | 'experience' | 'education
                                             else if (type === 'achievements') portfolio.updateAchievement(item.id, updatedItem as any);
                                             else portfolio.updateCertification(item.id, updatedItem as any);
                                         };
+
+                                        // Edit array<string> fields (e.g. project tags, experience achievements)
+                                        if (Array.isArray(item[key]) && typeof item[key]?.[0] !== 'object') {
+                                            const values: string[] = item[key] as string[];
+                                            const updateArray = (next: string[]) => {
+                                                const updatedItem = { ...item, [key]: next };
+                                                if (type === 'projects') portfolio.updateProject(item.id, updatedItem as any);
+                                                else if (type === 'experience') portfolio.updateExperience(item.id, updatedItem as any);
+                                                else if (type === 'education') portfolio.updateEducation(item.id, updatedItem as any);
+                                                else if (type === 'certificates') portfolio.updateCertification(item.id, updatedItem as any);
+                                                else if (type === 'achievements') portfolio.updateAchievement(item.id, updatedItem as any);
+                                            };
+
+                                            return (
+                                                <div key={key} className="space-y-3">
+                                                    <div className="flex items-center justify-between">
+                                                        <label className="text-xs font-bold text-[#9CA3AF] uppercase tracking-widest pl-1">
+                                                            {key.replace(/([A-Z])/g, ' $1').replace(/^./, (str: string) => str.toUpperCase())}
+                                                        </label>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => updateArray([...values, "New item"])}
+                                                            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 text-white/90 border border-white/10 hover:bg-white/10 transition-all text-xs font-bold"
+                                                        >
+                                                            <Plus className="w-4 h-4" />
+                                                            Add
+                                                        </button>
+                                                    </div>
+
+                                                    <div className="grid gap-2">
+                                                        {values.length === 0 && (
+                                                            <div className="text-sm text-[#9CA3AF]">No items yet.</div>
+                                                        )}
+                                                        {values.map((val, idx) => (
+                                                            <div key={`${key}-${idx}`} className="flex items-center gap-3 bg-[#06080F] p-4 rounded-2xl border border-white/5">
+                                                                <input
+                                                                    className="flex-1 bg-transparent text-white font-medium focus:outline-none"
+                                                                    value={val}
+                                                                    onChange={(e) => {
+                                                                        const next = [...values];
+                                                                        next[idx] = e.target.value;
+                                                                        updateArray(next);
+                                                                    }}
+                                                                />
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => updateArray(values.filter((_, i) => i !== idx))}
+                                                                    className="p-2 text-red-400 hover:bg-red-400/10 rounded-xl transition-all"
+                                                                >
+                                                                    <Trash2 className="w-4 h-4" />
+                                                                </button>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            );
+                                        }
 
                                         if (key === 'scoreType') {
                                             return (
@@ -918,7 +977,7 @@ function DataListEditor({ type }: { type: 'projects' | 'experience' | 'education
                                                         }
                                                     };
 
-                                                    if (import.meta.env.VITE_R2_ACCESS_KEY_ID) {
+                                                    if (import.meta.env.VITE_R2_PUBLIC_URL) {
                                                         uploadToBucket(file);
                                                     } else {
                                                         const reader = new FileReader();

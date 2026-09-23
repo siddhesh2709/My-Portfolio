@@ -1,105 +1,183 @@
 import { motion } from "motion/react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Github, Linkedin, Mail, MapPin, GraduationCap, Cpu, Briefcase } from "lucide-react";
 import { usePortfolio } from "../context/PortfolioContext";
 
 export function Hero() {
   const { personalInfo } = usePortfolio();
+
+  const stackBadges = ["MERN", "Spring Boot", "FastAPI", "AWS", "Docker", "PostgreSQL"];
+
+  const infoCards = [
+    {
+      icon: MapPin,
+      label: "Location",
+      value: "Nashik, India",
+      sub: undefined as string | undefined,
+    },
+    {
+      icon: GraduationCap,
+      label: "Education",
+      value: "VIT · B.Tech CSE (Cloud & Automation)",
+      sub: "2023 - 2027",
+    },
+    {
+      icon: Cpu,
+      label: "Core Stack",
+      value: "React · Node · Spring Boot · FastAPI",
+      sub: "AWS · Docker · PostgreSQL",
+    },
+    {
+      icon: Briefcase,
+      label: "Availability",
+      value: "Open to Internships & Full-Time",
+      sub: "Graduating May 2027",
+    },
+  ];
+
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      className="relative h-screen min-h-[680px] max-h-[1000px] overflow-hidden bg-background flex flex-col justify-center"
     >
-      {/* Animated Background Mesh */}
-      <div className="absolute inset-0">
-        <div className="absolute top-[10%] right-[10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] animate-pulse-glow" />
-        <div className="absolute bottom-[20%] left-[5%] w-[400px] h-[400px] bg-accent/20 rounded-full blur-[100px]" />
+      {/* Background */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute inset-0 bg-grid opacity-[0.025]" />
+        <div className="absolute top-[-10%] left-[20%] h-[500px] w-[600px] rounded-full bg-primary/8 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[10%] h-[400px] w-[500px] rounded-full bg-accent/8 blur-[100px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background/60" />
       </div>
 
-      {/* Noise Texture Overlay */}
-      <div
-        className="absolute inset-0 opacity-[0.015]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' /%3E%3C/svg%3E")`,
-        }}
-      />
+      <div className="relative z-10 container w-full">
+        <div className="grid items-center gap-8 lg:gap-12 lg:grid-cols-12">
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center gap-12 lg:gap-20">
-        {/* Text Content */}
-        <div className="flex-1 text-center md:text-left">
+          {/* LEFT */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55 }}
+            className="lg:col-span-7 flex flex-col"
           >
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-5 leading-[1.1] tracking-tight">
-              <span className="text-foreground block">Hi, I'm</span>
-              <span className="bg-gradient-to-r from-primary via-gradient-indigo to-gradient-purple bg-clip-text text-transparent block">
-                {personalInfo.name}
-              </span>
-              <span className="text-foreground/90 block text-3xl md:text-5xl lg:text-6xl mt-2">
-                Full-Stack Developer with Cloud (AWS)
-              </span>
+            <motion.p
+              initial={{ opacity: 0, x: -12 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1, duration: 0.4 }}
+              className="eyebrow"
+            >
+              Software Developer · Cloud Computing &amp; Automation
+            </motion.p>
+
+            <h1 className="mt-4 text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.02]">
+              {personalInfo.name}
             </h1>
 
-            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto md:mx-0 mb-10 leading-relaxed">
+            {/* Accent underline */}
+            <div className="mt-4 h-1 w-20 rounded-full bg-gradient-to-r from-primary to-accent" />
+
+            {/* Stack badges */}
+            <div className="mt-5 flex flex-wrap gap-2">
+              <span className="inline-flex items-center rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-sm font-semibold text-primary whitespace-nowrap">
+                Full‑Stack Developer
+              </span>
+              {stackBadges.map((badge) => (
+                <span
+                  key={badge}
+                  className="inline-flex items-center rounded-full border border-border bg-secondary/80 px-3 py-1 text-sm text-muted-foreground whitespace-nowrap"
+                >
+                  {badge}
+                </span>
+              ))}
+            </div>
+
+            {/* Bio */}
+            <p className="mt-5 text-muted-foreground text-[15px] leading-relaxed max-w-[540px]">
               {personalInfo.profile}
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="group relative px-8 py-3 rounded-[18px] overflow-hidden shadow-lg shadow-primary/20"
+            {/* CTAs */}
+            <div className="mt-7 flex flex-wrap gap-3">
+              <button
+                className="btn-primary"
                 onClick={() => document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" })}
               >
-                <div className="absolute inset-0 bg-primary transition-transform duration-500 group-hover:scale-110" />
-                <span className="relative z-10 flex items-center gap-2 text-primary-foreground font-black uppercase tracking-widest text-sm">
-                  View My Work
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </span>
-              </motion.button>
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="group px-8 py-3 rounded-[18px] bg-secondary border border-border text-foreground backdrop-blur-sm hover:border-primary/50 hover:bg-background transition-all duration-300 shadow-sm"
+                View Projects <ArrowRight className="h-4 w-4" />
+              </button>
+              <button
+                className="btn-secondary"
                 onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
               >
-                <span className="flex items-center gap-2 font-black uppercase tracking-widest text-sm">
-                  Get In Touch
-                </span>
-              </motion.button>
+                Contact Me
+              </button>
+            </div>
+
+            {/* Socials */}
+            <div className="mt-6 flex items-center gap-4 text-muted-foreground">
+              <a
+                className="inline-flex items-center gap-2 text-sm hover:text-foreground transition-colors"
+                href={personalInfo.links.github}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Github className="h-4 w-4" /> GitHub
+              </a>
+              <span className="h-4 w-px bg-border" />
+              <a
+                className="inline-flex items-center gap-2 text-sm hover:text-foreground transition-colors"
+                href={personalInfo.links.linkedin}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Linkedin className="h-4 w-4" /> LinkedIn
+              </a>
+              <span className="h-4 w-px bg-border" />
+              <a
+                className="inline-flex items-center gap-2 text-sm hover:text-foreground transition-colors"
+                href={`mailto:${personalInfo.email}`}
+              >
+                <Mail className="h-4 w-4" /> Email
+              </a>
             </div>
           </motion.div>
+
+          {/* RIGHT — info cards */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.55, delay: 0.1 }}
+            className="lg:col-span-5 hidden lg:flex flex-col gap-3"
+          >
+            {infoCards.map(({ icon: Icon, label, value, sub }, i) => (
+              <motion.div
+                key={label}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 + i * 0.08 }}
+                className="flex items-start gap-4 rounded-2xl border border-border bg-card/60 backdrop-blur-sm px-5 py-4 hover:border-primary/30 transition-colors group"
+              >
+                <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary/15 transition-colors">
+                  <Icon className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{label}</p>
+                  <p className="mt-0.5 text-sm font-medium leading-snug">{value}</p>
+                  {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+
         </div>
-
-        {/* Profile Image Section */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="relative flex-shrink-0"
-        >
-          <div className="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96">
-            {/* Decorative Background Rings */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-gradient-purple/20 rounded-full blur-2xl animate-pulse" />
-            <div className="absolute -inset-4 bg-gradient-to-bl from-gradient-indigo/10 to-transparent rounded-full blur-xl" />
-
-            {/* The Image Container */}
-            <div className="relative w-full h-full rounded-full border-4 border-background shadow-2xl overflow-hidden z-10">
-              <img
-                src={personalInfo.avatar}
-                alt={personalInfo.name}
-                className="w-full h-full object-cover"
-              />
-              {/* Subtle Overlay to match theme */}
-              <div className="absolute inset-0 bg-primary/5" />
-            </div>
-
-
-          </div>
-        </motion.div>
       </div>
-    </section >
+
+      {/* Scroll indicator */}
+      <motion.div
+        animate={{ y: [0, 10, 0] }}
+        transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 opacity-25"
+      >
+        <div className="w-5 h-9 border-2 border-slate-500 rounded-full flex justify-center pt-1.5">
+          <div className="w-1 h-2 bg-slate-500 rounded-full" />
+        </div>
+      </motion.div>
+    </section>
   );
 }

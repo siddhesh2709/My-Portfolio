@@ -38,13 +38,18 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         const saved = localStorage.getItem('portfolio_data');
         if (saved) {
             const parsed = JSON.parse(saved);
-            // Ensure new fields exist
+            // Always use fresh initialData for code-driven sections.
+            // Only persist user-edited fields (personalInfo, tools, achievements, messages).
             return {
                 ...initialData,
-                ...parsed,
-                personalInfo: { ...initialData.personalInfo, ...parsed.personalInfo },
-                tools: parsed.tools || initialData.tools || [],
-                achievements: parsed.achievements || initialData.achievements || [],
+                personalInfo: { ...initialData.personalInfo, ...parsed.personalInfo, avatar: initialData.personalInfo.avatar },
+                tools: initialData.tools,
+                skillCategories: initialData.skillCategories,
+                experiences: initialData.experiences,
+                education: initialData.education,
+                projects: initialData.projects,
+                certifications: initialData.certifications,
+                achievements: initialData.achievements,
                 messages: parsed.messages || []
             };
         }
@@ -52,7 +57,26 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     });
 
     useEffect(() => {
-        localStorage.setItem('portfolio_data', JSON.stringify(data));
+        try {
+            const dataString = JSON.stringify(data);
+            // Only save if data is reasonable size (< 4MB to leave room)
+            if (dataString.length < 4 * 1024 * 1024) {
+                localStorage.setItem('portfolio_data', dataString);
+            } else {
+                console.warn('Data too large for localStorage, skipping save');
+                // Clear old data to free space
+                localStorage.removeItem('portfolio_data');
+            }
+        } catch (e) {
+            console.error('Failed to save to localStorage (Storage full):', e);
+            // Try to clear and save minimal data
+            try {
+                localStorage.clear();
+                localStorage.setItem('portfolio_data', JSON.stringify(data));
+            } catch (clearError) {
+                console.error('Could not recover from storage error');
+            }
+        }
     }, [data]);
 
     const updatePersonalInfo = (personalInfo: PersonalInfo) => setData(prev => ({ ...prev, personalInfo }));

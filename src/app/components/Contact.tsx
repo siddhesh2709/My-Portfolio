@@ -12,26 +12,58 @@ export function Contact() {
   });
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSending, setIsSending] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.name || !formData.email || !formData.message) return;
 
-    // Create new message
-    const newMessage = {
-      id: Math.random().toString(36).substr(2, 9),
-      name: formData.name,
-      email: formData.email,
-      message: formData.message,
-      timestamp: new Date().toISOString(),
-      read: false
-    };
+    setIsSending(true);
 
-    // Save message
-    addMessage(newMessage);
+    try {
+      // Send directly to the email using FormSubmit's AJAX API
+      // Note: The very first time this runs, FormSubmit will send an activation email to this address.
+      const response = await fetch(`https://formsubmit.co/ajax/${personalInfo.email}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          _subject: `New Message from Portfolio: ${formData.name}`,
+          _replyto: formData.email,      // Reply-To = visitor's email
+          from_name: formData.name,      // Sender display name
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+        }),
+      });
 
-    // Clear form and show success
-    setFormData({ name: "", email: "", message: "" });
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
+      if (response.ok) {
+        // Create new message for the local dashboard as a backup
+        const newMessage = {
+          id: Math.random().toString(36).substr(2, 9),
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+          timestamp: new Date().toISOString(),
+          read: false
+        };
+        addMessage(newMessage);
+
+        // Clear form and show success
+        setFormData({ name: "", email: "", message: "" });
+        setSubmitted(true);
+        setTimeout(() => setSubmitted(false), 3000);
+      } else {
+        alert("Oops! Something went wrong while sending your message.");
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+      alert("Error sending message. Please try again.");
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -196,13 +228,14 @@ export function Contact() {
 
               <motion.button
                 type="submit"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="group relative w-full px-8 py-4 rounded-xl overflow-hidden bg-primary shadow-lg shadow-primary/25 hover:bg-gradient-indigo transition-colors"
+                disabled={isSending}
+                whileHover={!isSending ? { scale: 1.02 } : undefined}
+                whileTap={!isSending ? { scale: 0.98 } : undefined}
+                className={`group relative w-full px-8 py-4 rounded-xl overflow-hidden shadow-lg shadow-primary/25 transition-colors ${isSending ? 'bg-primary/50 cursor-not-allowed' : 'bg-primary hover:bg-gradient-indigo'}`}
               >
                 <span className="relative z-10 flex items-center justify-center gap-3 text-primary-foreground font-black uppercase tracking-[0.2em] text-sm">
-                  Send Message
-                  <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  {isSending ? 'Sending...' : 'Send Message'}
+                  {!isSending && <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
                 </span>
               </motion.button>
 

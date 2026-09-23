@@ -86,9 +86,9 @@ export function Footer() {
               href="#contact"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="inline-block px-6 py-2.5 rounded-[15px] bg-primary text-primary-foreground font-bold hover:bg-gradient-indigo transition-all duration-300 shadow-lg shadow-primary/20 text-sm"
+              className="inline-block px-8 py-3 rounded-2xl bg-primary text-primary-foreground font-black hover:opacity-90 transition-all duration-300 shadow-lg shadow-primary/20 text-sm uppercase tracking-[0.2em]"
             >
-              Get In Touch
+              Hire Me
             </motion.a>
           </div>
         </div>

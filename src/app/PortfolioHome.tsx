@@ -4,59 +4,87 @@ import { Projects } from "./components/Projects";
 import { Experience } from "./components/Experience";
 import { Education } from "./components/Education";
 import { Certifications } from "./components/Certifications";
-import { Achievements } from "./components/Achievements";
 import { Skills } from "./components/Skills";
 import { Contact } from "./components/Contact";
 import { Footer } from "./components/Footer";
-import { RightSidebar } from "./components/RightSidebar";
+import { SystemDesign } from "./components/SystemDesign";
+import { ResumeSection } from "./components/ResumeSection";
 import { usePortfolio } from "./context/PortfolioContext";
-
-import { useState } from "react";
+import { motion } from "motion/react";
 
 export function PortfolioHome() {
     const { personalInfo } = usePortfolio();
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     return (
-        <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+        <div className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
             <Navbar />
-            <RightSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
-            <main className={`transition-all duration-500 ease-in-out ${isSidebarOpen ? "xl:pr-[240px]" : "xl:pr-0"}`}>
+            <main>
                 <Hero />
-                <section id="about" className="relative py-32 px-6 overflow-hidden">
-                    {/* Glow from top-right */}
-                    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[150px]" />
 
-                    <div className="max-w-4xl mx-auto relative z-10">
-                        <div className="text-center mb-12">
-                            <h2 className="text-4xl md:text-6xl font-bold mb-6">
-                                <span className="text-foreground">About </span>
-                                <span className="bg-gradient-to-r from-primary to-gradient-indigo bg-clip-text text-transparent">
-                                    Me
-                                </span>
-                            </h2>
-                        </div>
-                        <div className="rounded-[28px] bg-card backdrop-blur-xl border border-border p-8 md:p-12 hover:border-primary/30 transition-all duration-300 shadow-xl shadow-primary/5">
-                            <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                                {personalInfo.profile}
-                            </p>
-                            <p className="text-lg text-muted-foreground leading-relaxed">
-                                Currently based in {personalInfo.location}, I am dedicated to building high-quality software solutions that solve real-world problems. My expertise spans across the full stack, with a particular focus on cloud-native architectures and modern development practices.
-                            </p>
+                <section id="about" className="section">
+                    <div className="container">
+                        <div className="grid gap-10 lg:grid-cols-12 items-center">
+                            <motion.div
+                                initial={{ opacity: 0, y: 16 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: "-100px" }}
+                                className="lg:col-span-7"
+                            >
+                                <p className="eyebrow">About</p>
+                                <h2 className="section-title">
+                                    Building scalable products with clean code and cloud-native architecture.
+                                </h2>
+                                <p className="section-lead">
+                                    {personalInfo.profile}
+                                </p>
+                                <div className="mt-8 grid grid-cols-3 gap-4">
+                                    {[
+                                        { k: "3", v: "Companies worked at" },
+                                        { k: "3+", v: "Full-stack projects" },
+                                        { k: "7.98", v: "CGPA at VIT" },
+                                    ].map((s) => (
+                                        <div key={s.v} className="card px-5 py-4">
+                                            <div className="text-2xl font-semibold tracking-tight">{s.k}</div>
+                                            <div className="text-sm text-muted-foreground">{s.v}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </motion.div>
+
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.98 }}
+                                whileInView={{ opacity: 1, scale: 1 }}
+                                viewport={{ once: true, margin: "-100px" }}
+                                transition={{ delay: 0.05 }}
+                                className="lg:col-span-5 flex justify-center lg:justify-end"
+                            >
+                                <div className="card overflow-hidden p-0 w-full max-w-[320px]">
+                                    <div className="aspect-square bg-secondary relative">
+                                        <img
+                                            src={personalInfo.avatar}
+                                            alt={`${personalInfo.name} portrait`}
+                                            className="absolute inset-0 h-full w-full object-cover object-top"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+                                    </div>
+                                </div>
+                            </motion.div>
                         </div>
                     </div>
                 </section>
 
+                <SystemDesign />
                 <Skills />
-                <Experience />
                 <Projects />
-                <Education />
+                <Experience />
                 <Certifications />
-                <Achievements />
-
+                <Education />
+                <ResumeSection />
                 <Contact />
+                <Footer />
             </main>
-            <Footer />
         </div>
     );
 }
+
+

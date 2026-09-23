@@ -2,63 +2,72 @@
 @import './tailwind.css';
 @import './theme.css';
 
-/* Custom Animations */
-@keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0px);
+@layer utilities {
+  .container {
+    @apply mx-auto w-full max-w-6xl px-6;
   }
 
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-@keyframes pulse-glow {
-
-  0%,
-  100% {
-    opacity: 0.5;
-    transform: scale(1);
-    filter: blur(20px);
+  .section {
+    @apply py-20 md:py-28;
   }
 
-  50% {
-    opacity: 0.8;
-    transform: scale(1.1);
-    filter: blur(30px);
-  }
-}
-
-@keyframes gradient-shift {
-
-  0%,
-  100% {
-    background-position: 0% 50%;
+  .eyebrow {
+    @apply text-xs font-semibold tracking-[0.22em] uppercase text-muted-foreground;
   }
 
-  50% {
-    background-position: 100% 50%;
+  .section-title {
+    @apply mt-3 text-3xl md:text-5xl font-semibold tracking-tight;
+  }
+
+  .section-lead {
+    @apply mt-5 text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl;
+  }
+
+  .card {
+    @apply rounded-2xl border border-border bg-card shadow-sm;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-colors;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-colors bg-primary text-primary-foreground hover:opacity-90;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-colors bg-secondary text-foreground hover:bg-secondary/80 border border-border;
   }
 }
 
-.animate-float {
-  animation: float 3s ease-in-out infinite;
+/* Advanced Glassmorphism */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
-.animate-pulse-glow {
-  animation: pulse-glow 3s ease-in-out infinite;
+.glass-morphism {
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient-shift 5s ease infinite;
+/* Hero Grid Background */
+.bg-grid {
+  background-size: 50px 50px;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
 }
 
-/* Custom Scrollbar */
+/* Smooth Scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -66,37 +75,188 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--primary), var(--gradient-indigo));
-  border-radius: 5px;
-  border: 2px solid var(--background);
+  background: var(--border);
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--gradient-indigo), var(--gradient-purple));
+  background: var(--primary);
 }
 
 /* Selection */
 ::selection {
-  background: rgba(79, 70, 229, 0.2);
-  color: var(--primary);
+  background: var(--primary);
+  color: white;
 }
 
-::-moz-selection {
-  background: rgba(79, 70, 229, 0.2);
-  color: var(--primary);
+/* Animations */
+@keyframes slow-pan {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 100% 100%;
+  }
 }
 
-/* Modern Card Effect */
-.glass-card {
-  background: rgba(255, 255, 255, 0.7);
+.animate-pan {
+  animation: slow-pan 30s linear infinite;
+}
+
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Noise Texture Overlay */
+.noise {
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  right: -50%;
+  bottom: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.06) 0 1px, transparent 1px) 0 0 / 18px 18px;
+  background-repeat: repeat;
+  animation: bg-animation .2s infinite;
+  opacity: .12;
+  visibility: visible;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+@keyframes bg-animation {
+  0% {
+    transform: translate(0, 0)
+  }
+
+  10% {
+    transform: translate(-5%, -5%)
+  }
+
+  20% {
+    transform: translate(-10%, 5%)
+  }
+
+  30% {
+    transform: translate(5%, -10%)
+  }
+
+  40% {
+    transform: translate(-5%, 15%)
+  }
+
+  50% {
+    transform: translate(-10%, 5%)
+  }
+
+  60% {
+    transform: translate(15%, 0)
+  }
+
+  70% {
+    transform: translate(0, 10%)
+  }
+
+  80% {
+    transform: translate(-15%, 0)
+  }
+
+  90% {
+    transform: translate(10%, 5%)
+  }
+
+  100% {
+    transform: translate(5%, 0)
+  }
+}
+
+/* Pro Frame Utilities */
+.pro-frame-border {
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.corner-accent {
+  width: 15px;
+  height: 15px;
+  border: 1px solid var(--primary);
+  position: absolute;
+}
+
+/* Masking for Fade Effects */
+.mask-fade-bottom {
+  mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+}
+
+.mask-fade-top {
+  mask-image: linear-gradient(to top, black 50%, transparent 100%);
+}
+
+/* Text Gradient Utility */
+.text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: var(--gradient-primary);
+}
+
+.bento-card {
+  /* Tailwind doesn't allow @apply of non-utility classes like `.glass`. */
+  background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  @apply rounded-none p-8 hover:border-primary/20 transition-all duration-500 bg-[#050505];
 }
 
-.dark .glass-card {
-  background: rgba(15, 23, 42, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+/* Subtle Scanline Effect */
+.scanline {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: rgba(99, 102, 241, 0.05);
+  opacity: 0.2;
+  z-index: 10000;
+  pointer-events: none;
+  animation: scanline 8s linear infinite;
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%)
+  }
+
+  100% {
+    transform: translateY(100vh)
+  }
 }

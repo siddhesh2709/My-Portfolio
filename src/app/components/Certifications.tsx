@@ -1,20 +1,48 @@
 import { motion } from "motion/react";
-import { Award, Calendar, ExternalLink } from "lucide-react";
+import { Award, Calendar, Building2, ZoomIn } from "lucide-react";
 import { usePortfolio } from "../context/PortfolioContext";
+import { useState } from "react";
 
 export function Certifications() {
     const { certifications } = usePortfolio();
+    const [lightbox, setLightbox] = useState<string | null>(null);
+
     return (
         <section id="certifications" className="relative py-20 px-6 overflow-hidden">
-            {/* Background Elements */}
             <div className="absolute top-[60%] right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px]" />
+
+            {/* Lightbox */}
+            {lightbox && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="fixed inset-0 z-[9999] bg-black/92 flex items-center justify-center p-6"
+                    onClick={() => setLightbox(null)}
+                >
+                    <motion.img
+                        initial={{ scale: 0.85, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ type: "spring", damping: 20 }}
+                        src={lightbox}
+                        alt="Certificate"
+                        className="max-w-4xl w-full max-h-[90vh] object-contain rounded-2xl shadow-2xl"
+                        onClick={(e) => e.stopPropagation()}
+                    />
+                    <button
+                        className="absolute top-6 right-8 text-white/50 hover:text-white text-5xl font-thin transition-colors leading-none"
+                        onClick={() => setLightbox(null)}
+                    >
+                        ×
+                    </button>
+                </motion.div>
+            )}
 
             <div className="max-w-7xl mx-auto relative z-10">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="text-center mb-20"
+                    className="text-center mb-16"
                 >
                     <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-widest mb-6">
                         <Award className="w-4 h-4" />
@@ -26,72 +54,109 @@ export function Certifications() {
                             Certifications
                         </span>
                     </h2>
+                    <p className="mt-3 text-muted-foreground text-sm">
+                        Click any certificate to view full size
+                    </p>
                 </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {certifications.map((cert, index) => (
-                        <motion.div
-                            key={cert.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            whileHover={{ y: -10 }}
-                            transition={{ duration: 0.3, delay: index * 0.1 }}
-                            className="group relative rounded-[24px] bg-card border border-border backdrop-blur-xl hover:border-primary/40 transition-all duration-300 overflow-hidden flex flex-col shadow-xl shadow-primary/5"
-                        >
-                            {/* Certificate Image Area */}
-                            <div className="relative h-44 bg-secondary border-b border-border overflow-hidden">
-                                {cert.image ? (
-                                    <img
-                                        src={cert.image}
-                                        alt={cert.title}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center">
-                                        <Award className="w-20 h-20 text-primary/10 group-hover:text-primary/20 transition-colors duration-500" />
-                                    </div>
-                                )}
-                                {/* Overlay gradient */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent opacity-80" />
-                            </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {certifications.map((cert: any, index: number) => {
+                        const hasBadge = !!cert.badge;
+                        const hasImage = !!cert.image;
 
-                            {/* Content */}
-                            <div className="p-6 flex flex-col flex-1">
-                                {/* Title */}
-                                <h4 className="text-lg font-bold text-foreground mb-3 group-hover:text-primary transition-colors tracking-tight">
-                                    {cert.title}
-                                </h4>
+                        return (
+                            <motion.div
+                                key={cert.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                whileHover={{ y: -6 }}
+                                transition={{ duration: 0.3, delay: index * 0.06 }}
+                                className="group relative rounded-[24px] bg-card border border-border backdrop-blur-xl hover:border-primary/40 transition-all duration-300 overflow-hidden flex flex-col shadow-xl shadow-primary/5"
+                            >
+                                {/* Card image area */}
+                                <div
+                                    className={`relative border-b border-white/5 overflow-hidden ${hasImage ? "h-44 cursor-pointer" : "h-28 flex items-center justify-center bg-[#0D0D0F]"}`}
+                                    onClick={() => hasImage && setLightbox(cert.image)}
+                                >
+                                    {hasImage ? (
+                                        <>
+                                            {/* Full cert as background */}
+                                            <img
+                                                src={cert.image}
+                                                alt={cert.title}
+                                                className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                                            />
+                                            {/* Dark overlay */}
+                                            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors duration-300" />
 
-                                {/* Date */}
-                                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary mb-4">
-                                    <Calendar className="w-3.5 h-3.5" />
-                                    {cert.period}
+                                            {/* Badge medal overlay (top-right) */}
+                                            {hasBadge && (
+                                                <div className="absolute top-3 right-3 w-16 h-16 drop-shadow-2xl">
+                                                    <img
+                                                        src={cert.badge}
+                                                        alt={`${cert.title} badge`}
+                                                        className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
+                                                        onClick={(e) => { e.stopPropagation(); setLightbox(cert.badge); }}
+                                                    />
+                                                </div>
+                                            )}
+
+                                            {/* Zoom icon */}
+                                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                <div className="bg-black/40 backdrop-blur-sm rounded-full p-2.5">
+                                                    <ZoomIn className="w-5 h-5 text-white" />
+                                                </div>
+                                            </div>
+                                        </>
+                                    ) : hasBadge ? (
+                                        /* Badge-only card — show badge centered */
+                                        <div
+                                            className="w-full h-28 flex items-center justify-center bg-[#0D0D0F] cursor-pointer"
+                                            onClick={() => setLightbox(cert.badge)}
+                                        >
+                                            <img
+                                                src={cert.badge}
+                                                alt={`${cert.title} badge`}
+                                                className="h-20 w-auto object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow-2xl"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <Award className="w-14 h-14 text-primary/10 group-hover:text-primary/20 transition-colors duration-500" />
+                                    )}
                                 </div>
 
-                                {/* Description */}
-                                <p className="text-muted-foreground text-[0.85rem] leading-relaxed mb-6 flex-1">
-                                    {cert.description}
-                                </p>
+                                {/* Content */}
+                                <div className="p-5 flex flex-col flex-1">
+                                    {/* Issuer */}
+                                    {cert.issuer && (
+                                        <div className="flex items-center gap-1.5 mb-1.5">
+                                            <Building2 className="w-3 h-3 text-primary/70 shrink-0" />
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-primary/70">
+                                                {cert.issuer}
+                                            </span>
+                                        </div>
+                                    )}
 
-                                {/* Footer */}
-                                <div className="flex items-center justify-between pt-4 border-t border-border">
-                                    <div className="flex gap-2">
-                                        <span className="px-3 py-1 rounded-lg bg-primary/10 border border-primary/20 text-[9px] font-black text-primary uppercase tracking-[0.2em]">
-                                            Verified
-                                        </span>
+                                    {/* Title */}
+                                    <h4 className="text-sm font-bold text-white mb-2.5 group-hover:text-primary transition-colors leading-snug">
+                                        {cert.title}
+                                    </h4>
+
+                                    {/* Date */}
+                                    <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground mb-3">
+                                        <Calendar className="w-3 h-3 shrink-0" />
+                                        {cert.period}
                                     </div>
-                                    <motion.button
-                                        whileHover={{ scale: 1.1, rotate: 10 }}
-                                        whileTap={{ scale: 0.9 }}
-                                        className="p-2 rounded-xl bg-secondary text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all border border-border"
-                                    >
-                                        <ExternalLink className="w-3.5 h-3.5" />
-                                    </motion.button>
+
+                                    {/* Description */}
+                                    <p className="text-[#9CA3AF] text-xs leading-relaxed line-clamp-2 mt-auto">
+                                        {cert.description}
+                                    </p>
                                 </div>
-                            </div>
-                        </motion.div>
-                    ))}
+                            </motion.div>
+                        );
+                    })}
                 </div>
             </div>
         </section>

@@ -1,125 +1,98 @@
 import { motion } from "motion/react";
-import { ExternalLink, Github } from "lucide-react";
-import { useState } from "react";
+import { ExternalLink, Github, Code2, Cpu, Globe, Zap } from "lucide-react";
 import { usePortfolio } from "../context/PortfolioContext";
 
 export function Projects() {
   const { projects } = usePortfolio();
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
-    <section id="projects" className="relative py-32 px-6 overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute top-[30%] right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px]" />
-
+    <section id="projects" className="relative py-32 px-6 bg-background">
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-20"
-        >
-          <h2 className="text-4xl md:text-6xl font-black mb-4 tracking-tight">
-            <span className="text-foreground">Featured </span>
-            <span className="bg-gradient-to-r from-primary to-gradient-indigo bg-clip-text text-transparent">
-              Projects
-            </span>
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            A selection of projects that showcase my expertise in building modern, scalable applications
-          </p>
-        </motion.div>
+        <div className="mb-20">
+          <motion.span
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            className="text-primary font-mono text-sm tracking-widest uppercase mb-4 block"
+          >
+            Proof of Work
+          </motion.span>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-4xl md:text-6xl font-bold mb-6"
+          >
+            Engineering <span className="text-gradient">Case Studies</span>
+          </motion.h2>
+        </div>
 
         {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((project, index) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {projects.map((project: any, index: number) => (
             <motion.div
-              key={index}
+              key={project.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              onHoverStart={() => setHoveredIndex(index)}
-              onHoverEnd={() => setHoveredIndex(null)}
-              className="group relative"
+              viewport={{ once: true }}
+              className="group relative bg-[#050505] border border-white/5 rounded-none overflow-hidden hover:border-primary/40 transition-all duration-500 flex flex-col h-full"
             >
-              {/* Card */}
-              <motion.div
-                whileHover={{ y: -10 }}
-                transition={{ duration: 0.3 }}
-                className="relative h-full rounded-[28px] bg-card border border-border overflow-hidden hover:border-primary/40 transition-all duration-300 shadow-xl shadow-primary/5"
-              >
-                {/* Project Image */}
-                <div className="relative h-40 overflow-hidden">
-                  <motion.div
-                    animate={{
-                      scale: hoveredIndex === index ? 1.1 : 1,
-                    }}
-                    transition={{ duration: 0.6 }}
-                    className="w-full h-full"
-                  >
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </motion.div>
+              {/* Technical Header */}
+              <div className="px-6 py-3 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
+                <span className="font-mono text-[9px] uppercase tracking-widest text-white/30">System_ID: {project.id.slice(0, 8)}</span>
+                <div className="flex gap-1">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary/20" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary/40" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                </div>
+              </div>
 
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+              {/* Image Preview */}
+              <div className="relative aspect-[16/9] overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700">
+                <div className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-10 group-hover:opacity-30 transition-opacity`} />
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-90" />
 
-                  {/* Action Buttons */}
-                  <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                    <motion.a
-                      href={project.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      className="w-10 h-10 rounded-xl bg-background/80 backdrop-blur-md border border-border flex items-center justify-center hover:bg-primary hover:text-white transition-colors shadow-lg"
-                    >
-                      <Github className="w-5 h-5" />
-                    </motion.a>
-                    <motion.a
-                      href={project.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      className="w-10 h-10 rounded-xl bg-background/80 backdrop-blur-md border border-border flex items-center justify-center hover:bg-gradient-indigo hover:text-white transition-colors shadow-lg"
-                    >
-                      <ExternalLink className="w-5 h-5" />
-                    </motion.a>
-                  </div>
+                {/* Status Overlay */}
+                <div className="absolute top-4 left-4">
+                  <span className="glass px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest text-white/60 border border-white/10">v.1.0_deployed</span>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-8 flex flex-col flex-grow">
+                <div className="mb-6">
+                  <h3 className="text-2xl font-black mb-2 group-hover:text-primary transition-colors tracking-tight uppercase leading-none">{project.title}</h3>
+                  <p className="text-[10px] text-primary/70 font-black uppercase tracking-[0.3em] font-mono">{project.subtitle}</p>
                 </div>
 
-                {/* Content */}
-                <div className="p-4">
-                  <h3 className="text-lg font-bold text-foreground mb-2 tracking-tight group-hover:text-primary transition-colors">
-                    {project.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4 leading-relaxed line-clamp-2">
-                    {project.description}
-                  </p>
+                <p className="text-sm text-white/50 line-clamp-3 mb-8 flex-grow leading-relaxed font-light">
+                  {project.problemStatement || project.description}
+                </p>
 
-                  {/* Tech Stack Tags */}
-                  <div className="flex flex-wrap gap-2">
-                    {project.tags.map((tag, tagIndex) => (
-                      <span
-                        key={tagIndex}
-                        className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-secondary border border-border text-muted-foreground group-hover:border-primary/30 group-hover:text-primary transition-colors"
-                      >
+                {/* Actions & Tags */}
+                <div className="flex items-center justify-between pt-6 border-t border-white/5 mt-auto">
+                  <div className="flex gap-4">
+                    <a href={project.github} className="text-white/40 hover:text-white transition-colors" title="Source">
+                      <Github className="w-5 h-5" />
+                    </a>
+                    <a href={project.link} className="text-white/40 hover:text-primary transition-colors" title="Live">
+                      <ExternalLink className="w-5 h-5" />
+                    </a>
+                  </div>
+                  <div className="flex gap-2">
+                    {project.tags.slice(0, 2).map((tag: string, i: number) => (
+                      <span key={i} className="text-[9px] font-mono text-white/30 uppercase border border-white/5 px-2 py-0.5">
                         {tag}
                       </span>
                     ))}
                   </div>
                 </div>
-
-                {/* Bottom Line */}
-                <div className={`h-1.5 w-full bg-gradient-to-r from-primary to-gradient-indigo scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500`} />
-              </motion.div>
+              </div>
             </motion.div>
           ))}
         </div>

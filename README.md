@@ -36,7 +36,10 @@ cd My-Portfolio
 # Install dependencies
 npm install
 
-# Start development server
+# Start the R2 signer server (required for uploads)
+npm run dev:server
+
+# Start the Vite development server
 npm run dev
 ```
 
@@ -53,6 +56,17 @@ npm run preview
 ## 🔐 Admin Access
 
 Access the admin panel at `/admin` route. Default password is `27@27`.
+
+## ☁️ R2 Uploads (Local Development)
+
+This project uses a local signer server to generate presigned upload URLs so your R2 secrets never reach the browser.
+
+1. Copy [.env.example](.env.example) to .env
+2. Fill in your R2 credentials and public URL
+3. Start the signer server: `npm run dev:server`
+4. Start the Vite app: `npm run dev`
+
+The Vite dev server proxies `/api/*` to the signer on port `8787`.
 
 ### Admin Features:
 - Edit personal information
